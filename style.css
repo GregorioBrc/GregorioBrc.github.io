@@ -27,6 +27,11 @@ body {
   overflow-x: hidden;
 }
 
+hr {
+  color: var(--deep-blue);
+  margin: 10px 0px;
+}
+
 /* --- CANVAS DE FONDO --- */
 #canvas {
   position: fixed;
@@ -387,15 +392,428 @@ footer {
   color: var(--accent-green);
 }
 
-/* --- RESPONSIVE --- */
-@media (max-width: 768px) {
+/* --- RESPONSIVE IMPROVEMENTS --- */
+
+/* Móviles pequeños (320px - 479px) */
+@media (max-width: 479px) {
+  /* CONTENEDOR PRINCIPAL */
+  #app-container {
+    padding: 0 15px;
+    max-width: 100%;
+  }
+
+  /* NAVEGACIÓN - Más compacta pero visible */
+  header {
+    height: 60px;
+  }
+
+  nav {
+    padding: 10px 0;
+  }
+
+  .logo {
+    font-size: 1.2rem;
+  }
+
   nav ul {
+    font-size: 0.75rem;
+    padding: 5px 8px;
+    gap: 15px;
+  }
+
+  nav ul a {
     display: none;
-  } /* Podrías añadir un menú hamburguesa luego */
+    font-size: 0.75rem;
+    padding: 5px 8px;
+  }
+
+  /* HERO SECTION - Optimizado para móviles */
+  #hero {
+    height: 70vh;
+    min-height: 500px;
+    padding: 20px 0;
+  }
+
+  .hero-content {
+    text-align: left;
+    padding: 0 10px;
+  }
+
+  h1 {
+    font-size: clamp(1.8rem, 8vw, 2.5rem);
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-size: clamp(1rem, 4vw, 1.2rem);
+    margin-bottom: 20px;
+  }
+
+  .hero-description {
+    font-size: clamp(0.9rem, 3.5vw, 1rem);
+    margin-bottom: 30px;
+    max-width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* BOTONES - Touch-friendly */
+  .hero-actions {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 14px 24px;
+    font-size: 0.9rem;
+    min-width: 200px;
+    text-align: center;
+  }
+
+  /* SECCIONES - Padding reducido */
+  .content-section {
+    padding: 60px 0;
+  }
+
+  .section-title {
+    font-size: clamp(1.3rem, 6vw, 1.5rem);
+    margin-bottom: 30px;
+  }
+
+  /* TARJETAS GLASS - Más compactas */
+  .glass-card {
+    padding: 25px 20px;
+    backdrop-filter: blur(8px);
+  }
+
+  /* GRID DE PROYECTOS - Single column */
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .project-card {
+    padding: 20px 15px;
+  }
+
+  .project-card h4 {
+    font-size: clamp(1.1rem, 5vw, 1.2rem);
+  }
+
+  .project-card p {
+    font-size: 0.85rem;
+    line-height: 1.5;
+  }
+
+  .project-tech {
+    gap: 8px;
+  }
+
+  .project-tech span {
+    font-size: 0.65rem;
+    padding: 3px 6px;
+  }
+
+  /* STACK - Single column */
+  .stack-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .stack-group ul {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .stack-group li {
+    font-size: 0.85rem;
+  }
+
+  /* CONTACTO - Tarjeta optimizada */
+  .contact-card {
+    padding: 30px 20px;
+    max-width: 90%;
+  }
+
+  .contact-desc {
+    font-size: clamp(0.9rem, 3.5vw, 1rem);
+    margin-bottom: 30px;
+  }
+
+  .main-mail {
+    font-size: clamp(0.8rem, 3vw, 1rem);
+    padding: 12px 20px;
+    word-break: break-all;
+    min-width: 0;
+  }
+
+  .social-wrapper {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  /* FOOTER */
+  footer {
+    padding: 30px 0;
+    font-size: 0.7rem;
+  }
+}
+
+/* Móviles grandes (480px - 767px) */
+@media (min-width: 480px) and (max-width: 767px) {
+  #app-container {
+    padding: 0 20px;
+  }
+
+  /* HERO */
+  #hero {
+    height: 75vh;
+    min-height: 550px;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 7vw, 3rem);
+  }
+
+  h2 {
+    font-size: clamp(1.1rem, 4vw, 1.3rem);
+  }
+
+  .hero-actions {
+    flex-direction: row;
+    gap: 15px;
+  }
+
+  /* GRID PROYECTOS - Mantener single column pero más espaciado */
+  .projects-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .project-card {
+    padding: 25px 20px;
+  }
+
+  /* STACK - Single column */
   .stack-container {
     grid-template-columns: 1fr;
   }
+
+  /* CONTACTO */
+  .social-wrapper {
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+/* Tablets (768px - 1023px) - Optimización de grid */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #app-container {
+    padding: 0 30px;
+  }
+
+  /* NAVEGACIÓN */
+  nav ul {
+    gap: 20px;
+  }
+
+  nav a {
+    font-size: 0.8rem;
+  }
+
+  /* HERO */
+  #hero {
+    height: 80vh;
+    min-height: 600px;
+  }
+
   h1 {
-    font-size: 3rem;
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+  }
+
+  h2 {
+    font-size: clamp(1.2rem, 3vw, 1.4rem);
+  }
+
+  /* GRID PROYECTOS - Dos columnas */
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .project-card {
+    padding: 25px;
+  }
+
+  /* STACK - Single column */
+  .stack-container {
+    grid-template-columns: 1fr;
+  }
+
+  /* SECCIONES */
+  .content-section {
+    padding: 80px 0;
+  }
+}
+
+/* Laptops pequeñas (1024px - 1199px) */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  #app-container {
+    padding: 0 40px;
+  }
+
+  /* HERO */
+  #hero {
+    height: 85vh;
+    min-height: 650px;
+  }
+
+  h1 {
+    font-size: clamp(3rem, 5vw, 4rem);
+  }
+
+  /* GRID PROYECTOS - Tres columnas */
+  .projects-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+  }
+
+  /* STACK - Dos columnas */
+  .stack-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Breakpoint extra pequeño (menos de 350px) */
+@media (max-width: 350px) {
+  /* Ajustes ultra-finos */
+  #app-container {
+    padding: 0 10px;
+  }
+
+  .logo {
+    font-size: 1.1rem;
+  }
+
+  nav ul {
+    gap: 10px;
+  }
+
+  nav a {
+    font-size: 0.7rem;
+    padding: 4px 6px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+
+  .hero-actions {
+    gap: 10px;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 12px 20px;
+    font-size: 0.85rem;
+    min-width: 180px;
+  }
+
+  .project-card {
+    padding: 15px 12px;
+  }
+
+  .glass-card {
+    padding: 20px 15px;
+  }
+}
+
+/* --- MEJORAS TOUCH-FRIENDLY --- */
+
+/* Aumentar áreas de clic en móviles */
+@media (max-width: 768px) {
+  nav a {
+    display: inline-block;
+    padding: 8px 12px;
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .main-mail,
+  .social-link {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .project-card {
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+
+  .project-card:active {
+    transform: scale(0.98);
+  }
+}
+
+/* --- MEJORAS DE RENDIMIENTO --- */
+
+/* Reducir animaciones en dispositivos móviles */
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .project-card:hover,
+  .btn-primary:hover,
+  .btn-secondary:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* --- ORIENTACIÓN PANTALLA --- */
+
+/* Modo horizontal en móviles */
+@media (max-width: 768px) and (orientation: landscape) {
+  #hero {
+    height: 100vh;
+    min-height: 400px;
+  }
+
+  .hero-actions {
+    flex-direction: row;
+    gap: 15px;
+  }
+}
+
+/* --- IMPRESIÓN --- */
+
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  #canvas {
+    display: none;
+  }
+
+  .hero-actions {
+    display: none;
+  }
+
+  .content-section {
+    page-break-inside: avoid;
   }
 }
