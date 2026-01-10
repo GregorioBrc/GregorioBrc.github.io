@@ -9,9 +9,11 @@ let parasiteIndex = 0;
 let particles = [];
 let mouse = { x: -1000, y: -1000, isStill: false, timer: null };
 
-const BG_ITERATIONS = 13;
-const PARASITE_ITERATIONS = 10;
-const GLOW_DIST = 150; // Aumentado un poco para mejor efecto
+const BG_ITERATIONS = 15;
+const MaxNum = 9999;
+const PARASITE_ITERATIONS = 11;
+const PARASITE_Time = 3500;
+const GLOW_DIST = 100; // Aumentado un poco para mejor efecto
 
 function getDragonSequence(iterations) {
   let steps = [1];
@@ -26,16 +28,16 @@ function init() {
   w = canvas.width = window.innerWidth;
   h = canvas.height = window.innerHeight;
 
-  const seed = Math.floor(Math.random() * 9999);
+  const seed = Math.floor(Math.random() * MaxNum);
   const seedElement = document.getElementById("seed-val");
   if (seedElement) seedElement.innerText = seed;
 
-  const size = 2 + Math.random() * 3;
+  const size = 3 + (seed / MaxNum) * 3;
   const sequence = getDragonSequence(BG_ITERATIONS);
 
   let cx = w * 0.5;
   let cy = h * 0.5;
-  let dir = Math.random() * Math.PI * 2;
+  let dir = (seed / MaxNum) * Math.PI * 2;
 
   bgDragonPoints = [{ x: cx, y: cy }];
   sequence.forEach((s) => {
@@ -67,7 +69,7 @@ window.addEventListener("mousemove", (e) => {
     startParasite();
     const statusElem = document.getElementById("status");
     if (statusElem) statusElem.innerText = "infecting...";
-  }, 2500);
+  }, PARASITE_Time);
 });
 
 function startParasite() {
