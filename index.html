@@ -1,5 +1,255 @@
-<html>
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gregorio BRC | Ingeniero Informático</title>
+    <meta
+      name="description"
+      content="Portafolio de Jose Gregorio Briceño Romero - Ingeniero Informático especializado en .NET, Compiladores e IA Generativa."
+    />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
   <body>
-    <h1>Hello, world! ~~Github~~</h1>
+    <canvas id="canvas"></canvas>
+
+    <div id="app-container">
+      <header>
+        <nav>
+          <div class="logo">GBRC<span>.</span></div>
+          <ul>
+            <li>> status: <span id="status">scanning</span></li>
+            <li><a href="#about">// sobre_mí</a></li>
+            <li><a href="#lab">// laboratorio</a></li>
+            <li><a href="#stack">// stack</a></li>
+            <li><a href="#contact">// contacto</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      <main>
+        <section id="hero">
+          <div class="hero-content">
+            <p class="code-prefix">01.01_init</p>
+            <h1>
+              Jose Gregorio <br /><span class="highlight">Briceño Romero</span>
+            </h1>
+            <h2>
+              Ingeniero Informático <span class="dim">&</span> Desarrollador de
+              Software
+            </h2>
+            <p class="hero-description">
+              Especializado en la construcción de ecosistemas digitales
+              robustos, desde compiladores de bajo nivel hasta soluciones B2B
+              multiplataforma.
+            </p>
+            <div class="hero-actions">
+              <a href="#lab" class="btn-primary">Ver Proyectos</a>
+              <a href="Tu_CV.pdf" target="_blank" class="btn-secondary"
+                >Descargar CV</a
+              >
+            </div>
+          </div>
+        </section>
+
+        <section id="about" class="content-section">
+          <h3 class="section-title">Perfil_Técnico</h3>
+          <div class="glass-card">
+            <p>
+              Ingeniero en formación con capacidad para transitar entre el
+              soporte técnico de infraestructura y el desarrollo de software de
+              alto nivel.
+            </p>
+            <p>
+              Mi enfoque está en la <strong>versatilidad tecnológica</strong>:
+              creo que un buen ingeniero debe ser capaz de entender tanto el
+              hardware que sostiene el sistema como el código que lo ejecuta. He
+              desarrollado soluciones que van desde aplicaciones móviles
+              empresariales hasta algoritmos de optimización lógica.
+            </p>
+          </div>
+        </section>
+
+        <section id="lab" class="content-section">
+          <h3 class="section-title">Laboratorio_de_Proyectos</h3>
+
+          <div class="projects-grid">
+            <article class="project-card destaque">
+              <div class="project-header">
+                <span class="project-tag">Sistemas Distribuidos</span>
+              </div>
+              <h4>Ecosistema de Gestión Comercial B2B</h4>
+              <p>
+                Arquitectura cliente-servidor integrada por una aplicación móvil
+                multiplataforma y una API RESTful. Implementa sincronización de
+                datos en tiempo real, gestión de créditos y seguridad basada en
+                JWT.
+              </p>
+              <div class="project-tech">
+                <span>.NET MAUI</span> <span>ASP.NET Core 8</span>
+                <span>MySQL</span> <span>Firebase</span>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <div class="project-header">
+                <span class="project-tag">Ciencias de la Computación</span>
+              </div>
+              <h4>Ingeniería de Lenguajes de Programación</h4>
+              <p>
+                Diseño y extensión de un compilador para el lenguaje
+                procedimental TINY. Implementación de análisis sintáctico
+                mediante AST, gestión de ámbitos jerárquicos y generación de
+                código objeto para arquitectura de registros.
+              </p>
+              <div class="project-tech">
+                <span>Java</span> <span>JFlex / JavaCUP</span>
+                <span>Gestión de Memoria</span>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <div class="project-header">
+                <span class="project-tag">Algoritmos & Optimización</span>
+              </div>
+              <h4>Modelado y Optimización Multiobjetivo</h4>
+              <p>
+                Aplicación de algoritmos genéticos para la resolución del modelo
+                de media-varianza de Markowitz, buscando el equilibrio óptimo
+                entre rendimiento esperado y riesgo financiero.
+              </p>
+              <div class="project-tech">
+                <span>Java</span> <span>Computación Evolutiva</span>
+                <span>Lógica Matemática</span>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <div class="project-header">
+                <span class="project-tag">Software de Escritorio</span>
+              </div>
+              <h4>Sistema de Control de Inventarios y Finanzas</h4>
+              <p>
+                Desarrollo de una solución integral para la administración
+                empresarial. Enfoque en la integridad de datos, generación de
+                reportes técnicos y automatización de procesos de facturación.
+              </p>
+              <div class="project-tech">
+                <span>WPF (C#)</span> <span>MVVM</span>
+                <span>SQLite / SQL Server</span> <span>NLog</span>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <div class="project-header">
+                <span class="project-tag">Investigación & IA</span>
+              </div>
+              <h4>Implementación de Flujos Generativos</h4>
+              <p>
+                Exploración y despliegue de modelos de difusión y lenguajes de
+                gran escala (LLMs). Implementación de flujos de trabajo
+                personalizados en ComfyUI y entrenamiento de adaptadores (LoRAs)
+                para casos de uso específicos.
+              </p>
+              <div class="project-tech">
+                <span>Python</span> <span>Stable Diffusion</span>
+                <span>API Integration</span> <span>Google Colab</span>
+              </div>
+            </article>
+
+            <article class="project-card">
+              <div class="project-header">
+                <span class="project-tag">Sistemas de Información Web</span>
+              </div>
+              <h4>Gestión de Activos y Patrimonio Digital</h4>
+              <p>
+                Desarrollo de una plataforma web para la administración de
+                acervos musicales. Incluye módulos de gestión de usuarios
+                multirol, control de inventario físico y acceso mediante códigos
+                QR.
+              </p>
+              <div class="project-tech">
+                <span>Laravel</span> <span>PHP</span> <span>MySQL</span>
+                <span>Tailwind CSS</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="stack" class="content-section">
+          <h3 class="section-title">Habilidades_Técnicas</h3>
+          <div class="stack-container">
+            <div class="stack-group">
+              <h5>Desarrollo</h5>
+              <ul>
+                <li>C# (.NET MAUI, WPF, ASP.NET)</li>
+                <li>PHP (Laravel)</li>
+                <li>JavaScript (React, Node.js)</li>
+                <li>Java & C++</li>
+              </ul>
+            </div>
+            <div class="stack-group">
+              <h5>Herramientas & Sistemas</h5>
+              <ul>
+                <li>SQL Server / MySQL / SQLite</li>
+                <li>Docker & Git</li>
+                <li>Linux Shell</li>
+                <li>Figma</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="contact" class="content-section">
+          <div class="contact-card glass-card">
+            <p class="code-prefix">// 04.01_contact_init</p>
+            <h2 class="section-title">¿Hablamos?<span>_</span></h2>
+            <p class="contact-desc">
+              Actualmente estoy abierto a nuevas oportunidades y proyectos
+              desafiantes. Si tienes una propuesta o solo quieres saludar, mi
+              terminal está abierta.
+            </p>
+
+            <div class="contact-methods">
+              <a href="mailto:gregorio1502@hotmail.com" class="main-mail">
+                <span class="icon">at</span> gregorio1502@hotmail.com
+              </a>
+
+              <div class="social-wrapper">
+                <a
+                  href="https://github.com/GregorioBrc"
+                  target="_blank"
+                  class="social-link"
+                >
+                  <span class="bracket">[</span> GitHub
+                  <span class="bracket">]</span>
+                </a>
+                <a href="#" target="_blank" class="social-link">
+                  <span class="bracket">[</span> LinkedIn
+                  <span class="bracket">]</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        <p>
+          &copy; 2025 // Diseñado y programado por Gregorio BRC //
+          <span class="dragon-link"
+            >Dragon.init( <strong><span id="seed-val">0</span></strong> )</span
+          >
+        </p>
+      </footer>
+    </div>
+
+    <script src="fractal.js"></script>
   </body>
 </html>
