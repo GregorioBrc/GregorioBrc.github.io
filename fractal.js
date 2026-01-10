@@ -67,7 +67,7 @@ window.addEventListener("mousemove", (e) => {
     startParasite();
     const statusElem = document.getElementById("status");
     if (statusElem) statusElem.innerText = "infecting...";
-  }, 1200);
+  }, 2500);
 });
 
 function startParasite() {
