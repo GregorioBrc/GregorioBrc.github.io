@@ -1,0 +1,115 @@
+.stack-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.stack-group {
+  position: relative;
+  padding: 30px !important;
+  border: 1px solid rgba(0, 210, 255, 0.1) !important;
+  transition: 0.3s ease;
+}
+
+.stack-group:hover {
+  border-color: var(--primary-blue) !important;
+  box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.05);
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 25px;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+  padding-bottom: 15px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent-green);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent-green);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.stack-group h5 {
+  font-family: var(--font-mono);
+  color: var(--text-main);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+
+.skill-list {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+  width: 100%;
+}
+
+.skill-list li {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  background: rgba(0, 210, 255, 0.03);
+  padding: 12px;
+  border-radius: 2px;
+  border-left: 3px solid var(--deep-blue);
+  border-right: 1px solid rgba(0, 210, 255, 0.1);
+  border-top: 1px solid rgba(0, 210, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 210, 255, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  cursor: crosshair;
+
+  position: relative;
+  overflow: hidden;
+  padding-right: 40px;
+}
+
+.skill-list li:hover {
+  background: rgba(0, 210, 255, 0.1);
+  border-left-color: var(--accent-green);
+  color: var(--primary-blue);
+  transform: translateX(8px);
+  box-shadow: -5px 0 15px rgba(68, 255, 153, 0.2);
+}
+
+.skill-list li::before {
+  content: "::";
+  margin-right: 10px;
+  color: var(--accent-green);
+  font-weight: bold;
+}
+
+.skill-list li span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.skill-list li::after {
+  content: "0x" attr(data-id);
+  position: absolute;
+  right: 8px;
+  bottom: 4px;
+  font-size: 0.55rem;
+  opacity: 0.3;
+  color: var(--primary-blue);
+  font-family: var(--font-mono);
+}
