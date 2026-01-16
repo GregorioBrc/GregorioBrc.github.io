@@ -1,0 +1,53 @@
+[
+  {
+    "id": "b2b-maui-api",
+    "tag": "Sistemas Distribuidos",
+    "title": "Ecosistema de Gestión Comercial B2B",
+    "shortDesc": "Arquitectura cliente-servidor integrada por una aplicación móvil multiplataforma y una API RESTful. Sincronización en tiempo real y seguridad JWT.",
+    "tech": [".NET MAUI", "ASP.NET Core 8", "MySQL", "Firebase"],
+    "readmePath": [
+      { "label": "📱 App Móvil", "path": "readmes/AndroidAppIGBC.md" },
+      { "label": "🌐 Web API Backend", "path": "readmes/WebApi_IGBC.md" }
+    ]
+  },
+  {
+    "id": "tiny-compiler",
+    "tag": "Ciencias de la Computación",
+    "title": "Ingeniería de Lenguajes de Programación",
+    "shortDesc": "Diseño y extensión de un compilador para el lenguaje TINY. Implementación de análisis sintáctico (AST) y gestión de ámbitos jerárquicos.",
+    "tech": ["Java", "JFlex / JavaCUP", "Gestión de Memoria"],
+    "readmePath": "https://raw.githubusercontent.com/GregorioBrc/Compilador/refs/heads/main/README.md"
+  },
+  {
+    "id": "genetic-portfolio",
+    "tag": "Algoritmos & Optimización",
+    "title": "Modelado y Optimización Multiobjetivo",
+    "shortDesc": "Aplicación de algoritmos genéticos para resolver el modelo de Markowitz, buscando el equilibrio óptimo entre rendimiento y riesgo.",
+    "tech": ["Java", "Computación Evolutiva", "Lógica Matemática"],
+    "readmePath": "readmes/Optimizacion_Cartera.md"
+  },
+  {
+    "id": "wpf-inventory",
+    "tag": "Software de Escritorio",
+    "title": "Sistema de Control de Inventarios y Finanzas",
+    "shortDesc": "Solución integral para administración empresarial con enfoque en integridad de datos y arquitectura MVVM robusta.",
+    "tech": ["WPF (C#)", "MVVM", "SQLite / SQL Server", "NLog"],
+    "readmePath": "readmes/Agropecuaria_Sist.md"
+  },
+  {
+    "id": "gen-ai-research",
+    "tag": "Investigación & IA",
+    "title": "Implementación de Flujos Generativos",
+    "shortDesc": "Exploración y despliegue de modelos de difusión y LLMs. Flujos personalizados en ComfyUI y entrenamiento de LoRAs.",
+    "tech": ["Python", "Stable Diffusion", "API Integration", "Google Colab"],
+    "readmePath": "readmes/Proyect_SI_Multi.md"
+  },
+  {
+    "id": "laravel-web",
+    "tag": "Sistemas de Información Web",
+    "title": "Gestión de Activos y Patrimonio Digital",
+    "shortDesc": "Plataforma web para administración de acervos musicales con gestión de usuarios multirol y acceso mediante códigos QR.",
+    "tech": ["Laravel", "PHP", "MySQL", "Tailwind CSS"],
+    "readmePath": "readmes/servicio_estudiantina.md"
+  }
+]

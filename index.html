@@ -15,6 +15,15 @@
     />
 
     <link rel="stylesheet" href="style.css" />
+
+    <!-- Motores de Renderizado -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   </head>
   <body>
     <canvas id="canvas"></canvas>
@@ -79,109 +88,20 @@
 
         <section id="lab" class="content-section">
           <h3 class="section-title">Laboratorio_de_Proyectos</h3>
-
-          <div class="projects-grid">
-            <article class="project-card destaque">
-              <div class="project-header">
-                <span class="project-tag">Sistemas Distribuidos</span>
-              </div>
-              <h4>Ecosistema de Gestión Comercial B2B</h4>
-              <p>
-                Arquitectura cliente-servidor integrada por una aplicación móvil
-                multiplataforma y una API RESTful. Implementa sincronización de
-                datos en tiempo real, gestión de créditos y seguridad basada en
-                JWT.
-              </p>
-              <div class="project-tech">
-                <span>.NET MAUI</span> <span>ASP.NET Core 8</span>
-                <span>MySQL</span> <span>Firebase</span>
-              </div>
-            </article>
-
-            <article class="project-card">
-              <div class="project-header">
-                <span class="project-tag">Ciencias de la Computación</span>
-              </div>
-              <h4>Ingeniería de Lenguajes de Programación</h4>
-              <p>
-                Diseño y extensión de un compilador para el lenguaje
-                procedimental TINY. Implementación de análisis sintáctico
-                mediante AST, gestión de ámbitos jerárquicos y generación de
-                código objeto para arquitectura de registros.
-              </p>
-              <div class="project-tech">
-                <span>Java</span> <span>JFlex / JavaCUP</span>
-                <span>Gestión de Memoria</span>
-              </div>
-            </article>
-
-            <article class="project-card">
-              <div class="project-header">
-                <span class="project-tag">Algoritmos & Optimización</span>
-              </div>
-              <h4>Modelado y Optimización Multiobjetivo</h4>
-              <p>
-                Aplicación de algoritmos genéticos para la resolución del modelo
-                de media-varianza de Markowitz, buscando el equilibrio óptimo
-                entre rendimiento esperado y riesgo financiero.
-              </p>
-              <div class="project-tech">
-                <span>Java</span> <span>Computación Evolutiva</span>
-                <span>Lógica Matemática</span>
-              </div>
-            </article>
-
-            <article class="project-card">
-              <div class="project-header">
-                <span class="project-tag">Software de Escritorio</span>
-              </div>
-              <h4>Sistema de Control de Inventarios y Finanzas</h4>
-              <p>
-                Desarrollo de una solución integral para la administración
-                empresarial. Enfoque en la integridad de datos, generación de
-                reportes técnicos y automatización de procesos de facturación.
-              </p>
-              <div class="project-tech">
-                <span>WPF (C#)</span> <span>MVVM</span>
-                <span>SQLite / SQL Server</span> <span>NLog</span>
-              </div>
-            </article>
-
-            <article class="project-card">
-              <div class="project-header">
-                <span class="project-tag">Investigación & IA</span>
-              </div>
-              <h4>Implementación de Flujos Generativos</h4>
-              <p>
-                Exploración y despliegue de modelos de difusión y lenguajes de
-                gran escala (LLMs). Implementación de flujos de trabajo
-                personalizados en ComfyUI y entrenamiento de adaptadores (LoRAs)
-                para casos de uso específicos.
-              </p>
-              <div class="project-tech">
-                <span>Python</span> <span>Stable Diffusion</span>
-                <span>API Integration</span> <span>Google Colab</span>
-              </div>
-            </article>
-
-            <article class="project-card">
-              <div class="project-header">
-                <span class="project-tag">Sistemas de Información Web</span>
-              </div>
-              <h4>Gestión de Activos y Patrimonio Digital</h4>
-              <p>
-                Desarrollo de una plataforma web para la administración de
-                acervos musicales. Incluye módulos de gestión de usuarios
-                multirol, control de inventario físico y acceso mediante códigos
-                QR.
-              </p>
-              <div class="project-tech">
-                <span>Laravel</span> <span>PHP</span> <span>MySQL</span>
-                <span>Tailwind CSS</span>
-              </div>
-            </article>
-          </div>
+          <div id="projects-grid" class="projects-grid"></div>
         </section>
+
+        <aside id="project-drawer" class="drawer">
+          <div class="drawer-content glass-card">
+            <button id="close-drawer" class="btn-close drawer-project-header">
+              // cerrar
+            </button>
+            <div id="drawer-header" class="">
+              <hr />
+            </div>
+            <div id="drawer-body"></div>
+          </div>
+        </aside>
 
         <section id="stack" class="content-section">
           <h3 class="section-title">Habilidades_Técnicas</h3>
@@ -251,6 +171,7 @@
       </footer>
     </div>
 
-    <script src="fractal.js"></script>
+    <script src="js/fractal.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>
