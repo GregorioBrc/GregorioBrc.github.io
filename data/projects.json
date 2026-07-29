@@ -32,12 +32,34 @@
     "readmePath": "https://raw.githubusercontent.com/GregorioBrc/Compilador/refs/heads/main/README.md"
   },
   {
+    "id": "laravel-web",
+    "tag": "Sistemas de Información Web",
+    "title": "Gestión de Activos y Patrimonio Digital",
+    "shortDesc": "Plataforma web para administración de acervos musicales con gestión de usuarios multirol y acceso mediante códigos QR.",
+    "tech": ["Laravel", "PHP", "MySQL", "Tailwind CSS"],
+    "readmePath": "readmes/servicio_estudiantina.md"
+  },
+  {
     "id": "genetic-portfolio",
     "tag": "Algoritmos & Optimización",
     "title": "Modelado y Optimización Multiobjetivo",
     "shortDesc": "Aplicación de algoritmos genéticos para resolver el modelo de Markowitz, buscando el equilibrio óptimo entre rendimiento y riesgo.",
     "tech": ["Java", "Computación Evolutiva", "Lógica Matemática"],
     "readmePath": "readmes/Optimizacion_Cartera.md"
+  },
+  {
+    "id": "injectpro-pos",
+    "tag": "Sistemas POS & Gestión Comercial",
+    "title": "InjectPro - Sistema POS y Control de Taller Automotriz",
+    "shortDesc": "Plataforma web desacoplada (REST API + SPA) para facturación de servicios técnicos, control de inventario con alertas de stock, cobranza multimoneda (COP/USD/VES) y cierres de caja diarios.",
+    "tech": [
+      "Laravel 12",
+      "React 19",
+      "Tailwind CSS v4",
+      "Sanctum",
+      "SQLite / MySQL"
+    ],
+    "readmePath": "readmes/InjectPro.md"
   },
   {
     "id": "wpf-inventory",
@@ -54,13 +76,5 @@
     "shortDesc": "Exploración y despliegue de modelos de difusión y LLMs. Flujos personalizados en ComfyUI y entrenamiento de LoRAs.",
     "tech": ["Python", "Stable Diffusion", "API Integration", "Google Colab"],
     "readmePath": "readmes/Proyect_SI_Multi.md"
-  },
-  {
-    "id": "laravel-web",
-    "tag": "Sistemas de Información Web",
-    "title": "Gestión de Activos y Patrimonio Digital",
-    "shortDesc": "Plataforma web para administración de acervos musicales con gestión de usuarios multirol y acceso mediante códigos QR.",
-    "tech": ["Laravel", "PHP", "MySQL", "Tailwind CSS"],
-    "readmePath": "readmes/servicio_estudiantina.md"
   }
 ]
