@@ -1,275 +1,169 @@
-# 🚀 ChatGPT Clone - Aplicación de Chat con IA
+# Portal Fullstack de Chat Multi-Proveedor LLM (ChatGPT Clone)
 
-Una aplicación de chat moderna que integra múltiples servicios de inteligencia artificial (OpenAI, Google Gemini, y servicios de Hugging Face/OpenRouter) con una interfaz de usuario intuitiva y gestión completa de conversaciones.
+[![React 19](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-22.x-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![Express.js](https://img.shields.io/badge/Express.js-4.21-000000?style=flat-square&logo=express&logoColor=white)](https://expressjs.com/)
+[![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=flat-square&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
+[![Sequelize](https://img.shields.io/badge/Sequelize-ORM-52B0E7?style=flat-square&logo=sequelize&logoColor=white)](https://sequelize.org/)
+[![Google Gemini](https://img.shields.io/badge/Google-Gemini%20API-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev/)
+[![OpenAI](https://img.shields.io/badge/OpenAI-API-412991?style=flat-square&logo=openai&logoColor=white)](https://openai.com/)
+[![Vite](https://img.shields.io/badge/Vite-6.2-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
 
-<div align="center">
-  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React"/>
-  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
-  <img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js"/>
-  <img src="https://img.shields.io/badge/Express.js-404D59?style=for-the-badge" alt="Express.js"/>
-  <img src="https://img.shields.io/badge/Google%20Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google Gemini"/>
-  <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white" alt="OpenAI"/>
-</div>
+## Descripcion General
 
-## 📋 Índice
+Esta aplicacion es una plataforma web Fullstack para interaccion conversacional con **Modelos de Lenguaje de Gran Escala (LLMs)** multi-proveedor. El sistema desacopla la capa de presentacion web de los proveedores de inteligencia artificial mediante una API Gateway centralizada en **Express.js** e **TypeScript**, permitiendo a los usuarios alternar dinamicamente entre modelos comerciales en la nube (Google Gemini, OpenAI, OpenRouter, Hugging Face) e instancias locales/remotas alojadas en Google Colab a traves de tuneles Cloudflare.
 
-- [🌟 Características](#-características)
-- [🛠️ Tecnologías Utilizadas](#️-tecnologías-utilizadas)
-- [🏗️ Arquitectura](#️-arquitectura)
-- [📦 Instalación](#-instalación)
-- [⚙️ Configuración](#️-configuración)
-- [🚀 Uso](#-uso)
-- [📡 API Endpoints](#-api-endpoints)
-- [📁 Estructura del Proyecto](#-estructura-del-proyecto)
-- [🔧 Desarrollo](#-desarrollo)
-- [📝 Notas](#-notas)
+La plataforma gestiona sesiones autenticadas, historial persistente de conversaciones en formato JSON, parametros de generacion personalizados (temperatura, limite de tokens) y una interfaz reactiva construida sobre **React 19** y **Vite**.
 
-## 🌟 Características
+---
 
-### ✅ Funcionalidades Principales
+## Integracion Multi-Proveedor LLM
 
-- **Multi-LMS Support**: Integración con OpenAI, Google Gemini, Hugging Face y OpenRouter
-- **Gestión de Conversaciones**: Crear, listar y gestionar múltiples chats por usuario
-- **Autenticación de Usuarios**: Sistema completo de registro y login
-- **Interfaz Responsiva**: Diseño moderno con Material-UI
-- **Persistencia de Datos**: SQLite con Sequelize ORM
-- **Tokens API**: Soporte para múltiples claves API
+El servidor backend expone controladores dedicados para abstraer las diferencias entre las APIs de cada proveedor:
 
-### 💬 Capacidades del Chat
+### 1. Google Gemini Service (`geminiService.ts`)
 
-- Conversaciones en tiempo real con múltiples modelos de IA
-- Historial de mensajes persistente
-- Gestión de múltiples conversaciones simultáneas
-- Configuración personalizada de parámetros del modelo
-- Soporte para instrucciones del sistema
+* Integracion con la libreria oficial `@google/generative-ai`.
+* Soporte para modelos como `gemini-2.0-flash-lite` y `gemini-2.0-flash`.
+* Mapeo dinamico de instrucciones del sistema (*System Instructions*) y parametros de muestreo.
 
-## 🛠️ Tecnologías Utilizadas
+### 2. OpenAI / OpenRouter / Hugging Face Service (`openaiService.ts`)
 
-### Backend
+* Implementacion con la libreria oficial `openai` configurando `baseURL` dinamico.
+* Enrutamiento hacia endpoints compatibles con la especificacion OpenAI v1 para proveedores externos (Hugging Face Inference API y OpenRouter).
 
-- **Node.js** con **TypeScript**
-- **Express.js** - Framework web
-- **Sequelize** - ORM para base de datos
-- **SQLite** - Base de datos
-- **CORS** - Manejo de CORS
-- **dotenv** - Variables de entorno
+### 3. Local / Colab LLM Service (`llmService.ts`)
 
-### Frontend
+* Abstraccion mediante `axios` para conectar con servidores vLLM, Ollama o Text-Generation-WebUI alojados en entornos remotos a traves de Cloudflare Tunnels.
+* Endpoints para la carga dinamica de modelos en VRAM (`/v1/internal/model/load`) e inspeccion de modelos disponibles (`/v1/internal/model/list`).
 
-- **React 19** con **TypeScript**
-- **Vite** - Build tool
-- **React Router** - Navegación
-- **Axios** - Cliente HTTP
-- **Material-UI** - Componentes UI
-- **Emotion** - Estilos CSS
+---
 
-### Servicios de IA
+## Arquitectura del Sistema y Modulos
 
-- **OpenAI API**
-- **Google Generative AI**
-- **Hugging Face**
-- **OpenRouter**
+### Backend (Express + TypeScript + Sequelize)
 
-## 🏗️ Arquitectura
+* **Arquitectura Controller-Service**: Separacion estricta entre enrutadores (`routers/`), controladores de peticiones (`controllers/`), servicios de integracion (`services/`) y modelos de persistencia (`models/`).
+* **ORM Sequelize con SQLite**: Persistencia relacional local en `database.sqlite` con almacenamiento de historial de mensajes en columnas de tipo `DataTypes.JSON`.
+* **Cargador de Modelos Semilla**: Inicializacion automatica al arrancar la aplicacion con modelos base preconfigurados (`gemini-2.0-flash`, `Mistral-Nemo-Instruct`, `dolphin3.0-mistral-24b`).
 
-```mermaid
-graph TD
-    A[Frontend React] -->|HTTP Requests| B[Backend Express.js]
-    B --> C[SQLite Database]
-    B --> D[OpenAI API]
-    B --> E[Google Gemini API]
-    B --> F[Hugging Face/OpenRouter]
-    
-    subgraph "Capas"
-        G[Frontend - React + TypeScript]
-        H[API Layer - Express Routes]
-        I[Business Logic - Services]
-        J[Data Layer - Models + Sequelize]
-    end
+### Frontend (React 19 + TypeScript + Vite)
+
+* **Estado Global de Sesion (`AuthContext.tsx`)**: Gestion de autenticacion del usuario con persistencia en `localStorage`.
+* **Componentes de Interfaz**:
+  * `BarraLateral.tsx`: Barra de navegacion colapsable con seleccion de conversaciones, proveedores y modelos.
+  * `Inicio.tsx`: Pantalla de bienvenida con entrada de texto inicial.
+  * `Mensajes.tsx`: Renderizado continuo de hilos conversacionales con formato de saltos de linea.
+* **Paginas y Rutas (`react-router-dom` v7)**: Vistas independientes para Login (`LoginPage.tsx`), Registro (`RegisterPage.tsx`) y Panel de Chat (`ChatPage.tsx`).
+
+---
+
+## Esquema de Persistencia Relacional
+
+### Modelo: User (`User.ts`)
+
+```typescript
+{
+  id: number;           // Clave primaria autoincremental
+  username: string;     // Identificador de usuario unico
+  mail: string;         // Correo electronico unico
+  password: string;     // Credencial de acceso
+}
 ```
 
-## 📦 Instalación
+### Modelo: Chat (`Chat.ts`)
+
+```typescript
+{
+  id_C: number;         // Identificador secuencial por usuario
+  userId: string;       // Identificador del usuario propietario
+  messages: JSON;       // Array de objetos mensaje [{ role, content }]
+}
+```
+
+### Modelo: Modelo (`Modelos.ts`)
+
+```typescript
+{
+  id: number;           // Clave primaria autoincremental
+  nombre: string;       // Nombre del modelo (ej: gemini-2.0-flash)
+  servicio: string;     // Proveedor (Gemini, HuggingFace, OpenRouter, Colab)
+}
+```
+
+---
+
+## Especificacion de Endpoints de la API
+
+### Autenticacion y Usuarios (`/api/user`)
+
+* `POST /api/user/users` — Registro de nuevos usuarios y creacion de preferencias iniciales.
+* `POST /api/user/Consult` — Autenticacion de credenciales y retorno de preferencias del usuario.
+* `POST /api/user/chats` — Obtencion del historial de conversaciones del usuario autenticado.
+* `DELETE /api/user/chats` — Eliminacion de una conversacion especifica.
+* `POST /api/user/Models` — Obtencion del catalogo unificado de modelos registrados.
+
+### Servicios de Inteligencia Artificial
+
+* `POST /api/gemini/chat` — Procesamiento de mensajes mediante la API de Google Gemini.
+* `POST /api/openai/chat` — Procesamiento mediante OpenAI, OpenRouter o Hugging Face.
+* `POST /api/chatllm/chat` — Procesamiento mediante servidor local / Colab.
+* `POST /api/chatllm/models/load` — Invocacion para la carga de modelos en VRAM remota.
+
+---
+
+## Guia de Instalacion y Ejecucion Local
 
 ### Requisitos Previos
 
-- Node.js >= 18.0.0
-- npm >= 9.0.0
+* Node.js version 18.0 o superior.
+* Gestor de paquetes npm version 9.0 o superior.
 
-### Paso 1: Clonar el Repositorio
+### Configuración del Backend
 
-```bash
-git clone https://github.com/tu-usuario/chatgpt-clone.git
-cd chatgpt-clone
-```
+1. Navegar al directorio del servidor e instalar dependencias:
 
-### Paso 2: Instalar Dependencias del Backend
+   ```bash
+   cd Backend
+   npm install
+   ```
 
-```bash
-cd Backend
-npm install
-```
+2. Crear archivo `.env` en la carpeta `Backend/` con las claves de API requeridas:
 
-### Paso 3: Instalar Dependencias del Frontend
+   ```env
+   PORT=3015
+   GEMINI_API_KEY=tu_clave_gemini
+   huggingface_API_KEY=tu_clave_huggingface
+   OpenRouter_API_KEY=tu_clave_openrouter
+   ```
 
-```bash
-cd ../frontend
-npm install
-```
+3. Iniciar el servidor en modo desarrollo:
 
-## ⚙️ Configuración
+   ```bash
+   npm run dev
+   ```
 
-### Variables de Entorno (Backend)
+### Configuración del Frontend
 
-Crea un archivo `.env` en el directorio `Backend`:
+1. Navegar al directorio de la interfaz web e instalar dependencias:
 
-```env
-PORT=3001
-OPENAI_API_KEY=tu_clave_openai
-GEMINI_API_KEY=tu_clave_gemini
-```
+   ```bash
+   cd ../frontend
+   npm install
+   ```
 
-### Variables de Entorno (Frontend)
+2. Iniciar el servidor de desarrollo de Vite:
 
-Crea un archivo `.env` en el directorio `frontend`:
+   ```bash
+   npm run dev
+   ```
 
-```env
-VITE_API_URL=http://localhost:3001
-VITE_COLAB_URL=tu_url_colab # Opcional para servicios colab
-```
-
-### Inicializar la Base de Datos
-
-El proyecto se sincroniza automáticamente con SQLite. Los modelos por defecto se insertan automáticamente al iniciar.
-
-## 🚀 Uso
-
-### Desarrollo Local
-
-1. Iniciar el servidor backend:
-
-```bash
-cd Backend
-npm run dev
-```
-
-1. Iniciar la aplicación frontend (en otra terminal):
-
-```bash
-cd frontend
-npm run dev
-```
-
-1. Abrir el navegador en `http://localhost:5173`
-
-### Producción
-
-1. Construir el frontend:
-
-```bash
-cd frontend
-npm run build
-```
-
-1. Construir el backend:
-
-```bash
-cd Backend
-npm run build
-```
-
-1. Iniciar el servidor:
-
-```bash
-cd Backend
-npm start
-```
-
-## 📡 API Endpoints
-
-### Autenticación
-
-- `POST /api/user/login` - Iniciar sesión
-- `POST /api/user/register` - Registrar usuario
-
-### Chat
-
-- `POST /api/chatllm/chat` - Enviar mensaje (modelos locales)
-- `POST /api/gemini/chat` - Enviar mensaje (Google Gemini)
-- `POST /api/openai/chat` - Enviar mensaje (OpenAI)
-
-### Gestión de Modelos
-
-- `POST /api/chatllm/models` - Listar modelos disponibles
-- `POST /api/chatllm/load` - Cargar modelo específico
-
-## 📁 Estructura del Proyecto
-
-```
-ChatGPT-Clone/
-├── Backend/
-│   ├── src/
-│   │   ├── controllers/     # Controladores de la API
-│   │   ├── models/         # Modelos de Sequelize
-│   │   ├── routers/        # Rutas de Express
-│   │   ├── services/       # Lógica de negocio
-│   │   ├── db/            # Configuración de base de datos
-│   │   └── app.ts         # Punto de entrada
-│   ├── package.json
-│   └── tsconfig.json
-├── frontend/
-│   ├── src/
-│   │   ├── components/     # Componentes React
-│   │   ├── context/        # Context API
-│   │   ├── hooks/          # Custom hooks
-│   │   ├── models/         # Tipos TypeScript
-│   │   ├── pages/          # Páginas principales
-│   │   ├── services/       # Servicios API
-│   │   └── styles/         # Estilos CSS
-│   ├── package.json
-│   └── vite.config.js
-└── README.md
-```
-
-## 🔧 Desarrollo
-
-### Scripts Disponibles
-
-**Backend:**
-
-```bash
-npm run dev      # Modo desarrollo con hot-reload
-npm run build    # Compilar TypeScript
-npm start        # Iniciar servidor en producción
-```
-
-**Frontend:**
-
-```bash
-npm run dev      # Desarrollo con Vite
-npm run build    # Construir para producción
-npm run preview  # Preview de producción
-```
-
-## 📝 Notas
-
-### 🔐 Seguridad
-
-- Las claves API deben mantenerse seguras y no hardcodeadas
-- Implementar validación de entrada robusta
-- Considerar rate limiting para proteger las APIs
-
-### 📊 Escalabilidad
-
-- El proyecto usa SQLite para desarrollo
-- Para producción, considerar PostgreSQL o MySQL
-- Implementar caché para mejorar rendimiento
-
-### 🎯 Mejoras Futuras Posibles
-
-- Implementar WebSockets para chat en tiempo real
-- Agregar gestión de archivos y adjuntos
-- Integrar más modelos de IA
-- Implementar autenticación OAuth
-- Agregar exportación de conversaciones
+3. Acceder en el navegador a `http://localhost:5173`.
 
 ---
+
+**Desarrollado por:**  
+Jose Gregorio Briceño Romero  
+Francisco José Sanchez Zea  
+*Ingenieria Informatica - Universidad Nacional Experimental del Tachira (UNET)*

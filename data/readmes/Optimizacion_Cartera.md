@@ -1,214 +1,139 @@
-# Optimización de Cartera - Algoritmos Genéticos
+# Optimizacion de Cartera de Inversion mediante Algoritmos Geneticos
 
-## 📊 Descripción General
+[![Java](https://img.shields.io/badge/Java-8%2B-ED8B00?style=flat-square&logo=openjdk&logoColor=white)](https://www.java.com/)
+[![Algorithms](https://img.shields.io/badge/Algorithm-Genetic%20Algorithm-00599C?style=flat-square)](https://en.wikipedia.org/wiki/Genetic_algorithm)
+[![Optimization](https://img.shields.io/badge/Optimization-Markowitz%20Model-512BD4?style=flat-square)](https://en.wikipedia.org/wiki/Markowitz_model)
+[![Data Format](https://img.shields.io/badge/Output-CSV%20%7C%20TXT-239120?style=flat-square)](https://docs.oracle.com/)
 
-Este proyecto implementa un algoritmo genético para optimizar carteras de inversión financiera, maximizando el beneficio esperado mientras minimiza el riesgo (varianza). El sistema utiliza datos históricos de cuatro acciones Ficticias : Ecopetrol, PREC, PfbColom y GrupoSura.
+## Descripcion General
 
-## 🎯 Objetivos
+Este proyecto implementa un sistema de optimizacion cuantitativa de portafolios financieros aplicando **Algoritmos Geneticos (AG)** sobre el modelo de media-varianza de **Harry Markowitz**. El objetivo es encontrar la distribucion optima de capital entre un conjunto de activos financieros, maximizando el rendimiento esperado del portafolio ($E$) mientras se minimiza simultaneamente el riesgo total expresado como la varianza conjunta ($\sigma^2$).
 
-- **Optimización Multiobjetivo**: Maximizar rendimiento esperado y minimizar riesgo simultáneamente
-- **Diversificación Inteligente**: Distribuir óptimamente el capital entre múltiples activos
-- **Análisis de Frontera Eficiente**: Generar la curva de Markowitz para diferentes niveles de riesgo
-- **Comparación de Estrategias**: Evaluar enfoques mono-objetivo vs multi-objetivo
+El sistema analiza dos enfoques evolutivos: una estrategia **Mono-objetivo** orientada a maximizar la relacion rendimiento/riesgo (ratio tipo Sharpe) y una estrategia **Multi-objetivo** basada en conteo de dominancia de Pareto y distancia euclidiana de afinidad para construir la **Frontera Eficiente**.
 
-## 🧬 Algoritmo Genético Implementado
+---
 
-### Características Principales
+## Modelo Formulado y Restricciones
 
-- **Población**: 500 individuos por generación
-- **Generaciones**: 300 iteraciones evolutivas
-- **Selección**: Torneo binario con criterios de dominancia
-- **Cruce**: Cruce uniforme con pesos aleatorios
-- **Mutación**: Mutación gaussiana adaptativa con restricciones
-- **Elitismo**: Preservación de los mejores individuos
+### Codificacion del Cromosoma (`Sujeto.java`)
 
-### Estructura del Cromosoma
+Cada individuo en la poblacion representa un portafolio de inversion compuesto por 4 genes ($x_0, x_1, x_2, x_3$), donde cada gen equivale a la proporcion de capital asignado a un activo especifico:
 
-Cada individuo representa una distribución de activos:
+* $x_0$: Proporcion asignada a Ecopetrol.
+* $x_1$: Proporcion asignada a PREC.
+* $x_2$: Proporcion asignada a PfbColom.
+* $x_3$: Proporcion asignada a GrupoSura.
 
-- **Gen 0**: Proporción en Ecopetrol
-- **Gen 1**: Proporción en PREC
-- **Gen 2**: Proporción en PfbColom
-- **Gen 3**: Proporción en GrupoSura
+### Restricciones del Dominio
 
-**Restricción**: `Σ(x_i) = 1.0` y `x_i ≥ 0` para todo i
+1. **Conservacion del Capital**: $\sum_{i=0}^{3} x_i = 1.0$ (El 100% del presupuesto es asignado).
+2. **No Venta en Corto**: $x_i \ge 0 \quad \forall i \in \{0, 1, 2, 3\}$.
 
-### Funciones de Evaluación
+### Funciones Financieras de Evaluacion
 
-1. **Rendimiento Esperado (E)**:
+1. **Rendimiento Esperado del Portafolio ($E$)**:
+   $$E = \sum_{i=0}^{3} (E_i \cdot x_i)$$
 
-   ```
-   E = Σ(beneficio_i × proporción_i)
-   ```
+2. **Riesgo Total / Varianza del Portafolio ($\sigma^2$)**:
+   $$\sigma^2 = \sum_{i=0}^{3} \sum_{j=0}^{3} (\Sigma_{ij} \cdot x_i \cdot x_j)$$
+   *Donde $\Sigma_{ij}$ representa la covarianza entre los activos $i$ y $j$ (o la varianza propia cuando $i = j$).*
 
-2. **Riesgo Total (σ²)**:
+---
 
-   ```
-   σ² = ΣΣ(covarianza_ij × proporción_i × proporción_j)
-   ```
+## Estrategias de Seleccion y Operadores Geneticos
 
-3. **Fitness Mono-objetivo**:
+### Parametros de la Simulacion Evolutiva
 
-   ```
-   Fitness = E / σ²
-   ```
+* **Tamaño de Poblacion**: 500 individuos por generacion.
+* **Iteraciones Evolutivas**: 300 generaciones por experimento.
+* **Experimentos Totales**: 600 ejecuciones (300 corridas mono-objetivo + 300 corridas multi-objetivo).
 
-4. **Dominancia Multi-objetivo**:
-   - Contador de individuos dominados
-   - Distancia euclidiana al frente de Pareto
+### 1. Optimizacion Mono-Objetivo (`Tipo = 1`)
 
-## 📈 Datos de Entrada
+Ajusta la aptitud del individuo mediante la funcion de adecuacion:
+$$\text{Fitness} = \frac{E}{\sigma^2}$$
+Los individuos se ordenan de mayor a menor aptitud, preservando el 50% superior de la poblacion para cruce.
 
-### Acciones Analizadas
+### 2. Optimizacion Multi-Objetivo (`Tipo = 2`)
 
-| Activo | Beneficio Esperado | Varianza |
-|--------|-------------------|----------|
-| Ecopetrol | 0.00429493 | 0.00671900 |
-| PREC | 0.02689857 | 0.03438852 |
-| PfbColom | 0.00827647 | 0.00344421 |
-| GrupoSura | 0.00794438 | 0.00233944 |
+* **Frente de Pareto por Conteo de Dominancia (`DetermDom`)**: Asigna una puntuacion basada en cuantos individuos de la poblacion superan al sujeto actual en ambos criterios ($E_j > E_i$ o $\sigma^2_j < \sigma^2_i$). Selecciona el 25% con menor indice de dominancia.
+* **Preservacion de Diversidad por Distancia Euclidiana (`Deter_Dist_Eu`)**: Mide el distanciamiento espacial entre soluciones no dominadas para prevenir la convergencia prematura en un solo punto, seleccionando un 10% adicional de individuos alejados.
 
-### Matriz de Covarianzas
+### 3. Cruce y Mutacion Adaptativa
+
+* **Cruce Uniforme Ponderado**: Genera descendientes combinando genes con un factor estocastico:
+  $$x_{\text{hijo}} = x_A \cdot \text{Combi} + x_B \cdot (1 - \text{Combi})$$
+* **Mutacion Gaussiana con Ajuste de Balance**: Aplica perturbaciones controladas sobre un gen ($x_i \pm \Delta$) y redistribuye equitativamente el cambio sobre los 3 genes restantes ($\mp \Delta / 3$) para garantizar que la suma total permanezca estrictamente igual a $1.0$.
+
+---
+
+## Datos de Entrada Financieros (`Datos.java`)
+
+### Retorno Esperado y Varianza por Activo
+
+| Activo | Rendimiento Esperado ($E_i$) | Varianza Propia ($\sigma_i^2$) |
+| --- | --- | --- |
+| **Ecopetrol** | 0.00429493 | 0.00671900 |
+| **PREC** | 0.02689857 | 0.03438852 |
+| **PfbColom** | 0.00827647 | 0.00344421 |
+| **GrupoSura** | 0.00794438 | 0.00233944 |
+
+### Matriz de Covarianzas ($\Sigma$)
 
 ```
-          Eco.    PREC    PfbC    G.Sura
-Ecopetrol  -1   0.01194 0.00171 0.00161
-PREC    0.01194   -1   0.00403 0.00375
-PfbColom 0.00171 0.00403   -1   0.00185
-G.Sura  0.00161 0.00375 0.00185   -1
-```
 
-## 🖥️ Estructura del Proyecto
+             Ecopetrol       PREC       PfbColom    GrupoSura
+Ecopetrol    0.00671900   0.01193778   0.00170523   0.00161020
+PREC         0.01193778   0.03438852   0.00402569   0.00375060
+PfbColom     0.00170523   0.00402569   0.00344421   0.00185332
+GrupoSura    0.00161020   0.00375060   0.00185332   0.00233944
 
 ```
-Optimizacion_Cartera/
-├── src/
-│   ├── Program.java      # Clase principal con el algoritmo genético
-│   ├── Sujeto.java       # Clase individuo con genes y evaluación
-│   └── Datos.java        # Datos financieros de entrada
-├── bin/                  # Archivos compilados (.class)
-├── D.csv                 # Resultados en formato CSV (Beneficio;Riesgo)
-├── Datos.txt             # Resultados completos con iteración
-├── X.txt                 # Log detallado de cada generación
-└── README.md            # Este archivo
-```
 
-## 🚀 Cómo Ejecutar
+---
 
-### Requisitos Previos
+## Ejecucion y Archivos de Salida
 
-- Java 8 o superior
-- IDE o compilador Java (Eclipse, IntelliJ, VS Code)
-
-### Compilación
+### Compilacion y Ejecucion via Consola
 
 ```bash
+# Compilar clases
 javac -d bin src/*.java
-```
 
-### Ejecución
-
-```bash
+# Ejecutar programa principal
 java -cp bin Program
 ```
 
-### Parámetros Configurables
+### Estructura de Archivos Generados
 
-En [`Program.java`](src/Program.java:11):
+* **`D.csv`**: Archivo separado por punto y coma con formato `Beneficio;Riesgo` conteniendo los 600 puntos resultantes para la construccion de la Frontera Eficiente.
+* **`Datos.txt`**: Tabulacion detallada por corrida con columnas `Iteracion \t Beneficio \t Riesgo \t Fitness`.
+* **`X.txt`**: Traza completa de la poblacion por generacion, incluyendo los pesos especificos de los 4 genes del mejor sujeto.
 
-```java
-public Program(int Cant, int Epoc, int n, int Tipo) {
-    // Cant: Tamaño de población (500)
-    // Epoc: Número de generaciones (300) 
-    // n: Número de iteración para múltiples corridas
-    // Tipo: 1=Mono-objetivo, 2=Multi-objetivo
-}
-```
+---
 
-## 📊 Archivos de Salida
+## Visualizacion Cuantitativa de la Frontera Eficiente
 
-### D.csv
-
-Formato: `beneficio;riesgo`
-
-- 600 puntos de la frontera eficiente
-- Valores optimizados para diferentes ponderaciones riesgo-beneficio
-
-### Datos.txt  
-
-Formato: `iteración\tbeneficio\trisgo\tfitness`
-
-- 600 registros (300 mono-objetivo + 300 multi-objetivo)
-- Tercera columna: fitness o ratio beneficio/riesgo
-
-### X.txt
-
-- Log detallado de cada generación
-- Mejor individuo por generación con valores de genes
-- Útil para debugging y análisis de convergencia
-
-## 🔍 Análisis de Resultados
-
-### Interpretación de Salidas
-
-1. **Frontera Eficiente**: Curva en espacio beneficio-riesgo
-2. **Portafolio Óptimo**: Mayor beneficio por unidad de riesgo
-3. **Diversificación**: Distribución balanceada entre activos
-4. **Convergencia**: Estabilización del fitness a través de generaciones
-
-### Visualización Recomendada
+Script en Python utilizando `pandas` y `matplotlib` para procesar el archivo `D.csv` y graficar la frontera de Markowitz:
 
 ```python
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# Leer CSV
-df = pd.read_csv('D.csv', sep=';', header=None, 
-                 names=['Beneficio', 'Riesgo'])
+# Cargar datos generados por el algoritmo genetico
+df = pd.read_csv('D.csv', sep=';', header=None, names=['Rendimiento', 'Riesgo'])
 
-# Graficar frontera eficiente
-plt.scatter(df['Riesgo'], df['Beneficio'], alpha=0.6)
-plt.xlabel('Riesgo (Varianza)')
-plt.ylabel('Beneficio Esperado')
-plt.title('Frontera Eficiente de Markowitz')
+# Graficar nube de puntos y frontera eficiente
+plt.figure(figsize=(10, 6))
+plt.scatter(df['Riesgo'], df['Rendimiento'], color='#1E88E5', alpha=0.5, edgecolors='none', s=20)
+plt.title('Frontera Eficiente de Markowitz - Algoritmo Genetico')
+plt.xlabel('Riesgo del Portafolio (Varianza $\sigma^2$)')
+plt.ylabel('Rendimiento Esperado ($E$)')
+plt.grid(True, linestyle='--', alpha=0.6)
 plt.show()
 ```
 
-## 🧪 Experimentos Recomendados
-
-1. **Comparación de Estrategias**:
-   - Ejecutar ambos modos (mono y multi-objetivo)
-   - Analizar diversidad de soluciones
-   - Evaluar robustez
-
-2. **Sensibilidad a Parámetros**:
-   - Variar tamaño de población
-   - Ajustar probabilidad de mutación
-   - Modificar criterios de selección
-
-3. **Análisis Temporal**:
-   - Ejecutar múltiples corridas
-   - Estudiar varianza en resultados
-   - Identificar portafolios consistentes
-
-## 📚 Referencias Teóricas
-
-### Teoría de Markowitz
-
-- **Modelo de Media-Varianza**: Optimización riesgo-beneficio
-- **Frontera Eficiente**: Conjunto de portafolios óptimos
-- **Diversificación**: Reducción de riesgo sin sacrificar rendimiento
-
-### Algoritmos Genéticos
-
-- **Selección Natural**: Supervivencia del más apto
-- **Operadores Genéticos**: Cruce y mutación
-- **Convergencia**: Tendencia hacia óptimo global
-
-## 📄 Licencia
-
-Proyecto académico para fines educativos e investigativos.
-
 ---
 
-**Nota**: Los datos financieros utilizados son ilustrativos. Para aplicaciones reales, utilizar datos históricos actualizados y considerar costos de transacción, impuestos y otras variables del mercado.
+**Desarrollado por Jose Gregorio Briceño Romero**  
+*Ingenieria Informatica - Universidad Nacional Experimental del Tachira (UNET)*

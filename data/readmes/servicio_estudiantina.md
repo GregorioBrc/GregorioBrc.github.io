@@ -1,259 +1,131 @@
-# 📚 Sistema de Gestión de Partituras - Estudiantina UNET "Eufrasio Medina"
+# Sistema de Gestion de Partituras e Inventario - Estudiantina UNET "Eufrasio Medina"
 
-<div align="center">
+[![Laravel 12](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=flat-square&logo=laravel&logoColor=white)](https://laravel.com/)
+[![PHP](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=flat-square&logo=php&logoColor=white)](https://php.net/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Vite](https://img.shields.io/badge/Vite-7.0-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=flat-square&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
+[![Pest / PHPUnit](https://img.shields.io/badge/Testing-Pest_PHP-00599C?style=flat-square)](https://pestphp.com/)
 
-<img src="public/images/logo_unet_fondo.jpg" alt="Logo UNET" width="200"/>
+## Descripcion General
 
-[![Laravel](https://img.shields.io/badge/Laravel-12.x-orange?style=flat-square&logo=laravel)](https://laravel.com/)
-[![PHP](https://img.shields.io/badge/PHP-8.2+-blue?style=flat-square&logo=php)](https://php.net/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.x-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+El **Sistema de Gestion de Partituras e Inventario** es una aplicacion web desarrollada sobre **Laravel 12** diseñada para catalogar, preservar y administrar el acervo musical e inventario fisico de la Estudiantina UNET "Eufrasio Medina", agrupacion institucional fundada en 1976 en la Universidad Nacional Experimental del Tachira (UNET).
 
-</div>
-
-## 🎯 Descripción del Proyecto
-
-El **Sistema de Gestión de Partituras** es una aplicación web desarrollada con Laravel que permite administrar de manera eficiente el catálogo musical de la Estudiantina UNET "Eufrasio Medina". Fundada en 1976, esta prestigiosa agrupación ha sido un pilar en la promoción de la música venezolana andina.
-
-### ✨ Características Principales
-
-- **Gestión integral de partituras** con información detallada de cada obra
-- **Sistema de autenticación** con roles diferenciados (Administrador/Usuario)
-- **Catálogo de autores e instrumentos** para clasificación organizada
-- **Sistema de préstamos** para control de inventario físico
-- **Interfaz responsive** adaptada a dispositivos móviles
-- **Modo oscuro** para mejor experiencia visual
-- **Generación de códigos QR** para acceso rápido a partituras
-
-## 🏛️ Contexto Académico
-
-Este proyecto forma parte del desarrollo de un sistema de información para la gestión del patrimonio musical de la Universidad Nacional Experimental del Táchira (UNET), específicamente para la Estudiantina "Eufrasio Medina".
-
-### 📊 Estructura de Datos
-
-El sistema gestiona las siguientes entidades principales:
-
-- **📖 Partituras**: Catálogo digital de partituras musicales
-- **✍️ Autores**: Compositores y arreglistas de las obras
-- **🎵 Obras**: Información sobre las piezas musicales
-- **🎸 Instrumentos**: Clasificación por instrumentos musicales
-- **🏗️ Estantes**: Ubicación física del material
-- **👥 Usuarios**: Sistema de gestión de usuarios multirol
-
-## 🚀 Tecnologías Utilizadas
-
-### Backend
-
-- **Framework**: Laravel 12.x
-- **Lenguaje**: PHP 8.2+
-- **Base de Datos**: SQLite (desarrollo) / MySQL (producción)
-- **ORM**: Eloquent
-- **Autenticación**: Laravel Breeze
-
-### Frontend
-
-- **Framework CSS**: Tailwind CSS 4.x
-- **Motor de Plantillas**: Blade
-- **JavaScript**: ES6+
-- **Build Tool**: Vite
-- **Componentes**: Laravel Components
-
-### Dependencias Principales
-
-```json
-{
-  "laravel/framework": "^12.0",
-  "simplesoftwareio/simple-qrcode": "^4.2",
-  "tailwindcss": "^4.0.0",
-  "vite": "^7.0.4"
-}
-```
-
-## 📦 Instalación
-
-### Requisitos Previos
-
-- PHP 8.2 o superior
-- Composer
-- Node.js 16+ y npm
-- SQLite (para desarrollo)
-
-### Pasos de Instalación
-
-1. **Clonar el repositorio**
-
-```bash
-git clone https://github.com/tu-usuario/sistema-partituras-unet.git
-cd sistema-partituras-unet
-```
-
-1. **Instalar dependencias PHP**
-
-```bash
-composer install
-```
-
-1. **Instalar dependencias Node.js**
-
-```bash
-npm install
-```
-
-1. **Configurar el entorno**
-
-```bash
-cp .env.example .env
-php artisan key:generate
-```
-
-1. **Base de datos**
-
-```bash
-touch database/database.sqlite
-php artisan migrate
-php artisan db:seed
-```
-
-1. **Compilar assets**
-
-```bash
-npm run dev
-```
-
-1. **Iniciar el servidor**
-
-```bash
-php artisan serve --port 8050
-```
-
-## 🎮 Uso del Sistema
-
-### Acceso al Sistema
-
-- **URL Principal**: `http://localhost:8050`
-- **Usuario Admin**: Configurado durante la instalación
-- **Sistema de Login**: Con recuperación de contraseña
-
-### Funcionalidades por Rol
-
-#### 👨‍💼 Administrador
-
-- ✅ Gestión completa de usuarios
-- ✅ CRUD de partituras, autores, obras e instrumentos
-- ✅ Control de inventario y estantes
-- ✅ Gestión de préstamos
-- ✅ Sistema de contribuciones
-- ✅ Panel de administración intuitivo
-
-#### 👤 Usuario Regular
-
-- 🔍 Visualización de partituras
-- 📚 Catálogo por autor
-- 👤 Gestión de perfil personal
-- 🔑 Cambio de contraseña
-- 🌓 Modo oscuro/claro
-
-## 📁 Estructura del Proyecto
-
-```
-servicio_estudiantina/
-├── app/
-│   ├── Http/Controllers/    # Controladores de la aplicación
-│   ├── Models/              # Modelos Eloquent
-│   ├── View/Components/     # Componentes Blade reutilizables
-│   └── Mail/                  # Correos electrónicos
-├── config/                    # Archivos de configuración
-├── database/
-│   ├── migrations/           # Migraciones de base de datos
-│   ├── seeders/              # Datos de prueba
-│   └── factories/            # Generadores de datos
-├── public/
-│   └── images/               # Recursos estáticos
-├── resources/
-│   ├── css/                  # Estilos Tailwind CSS
-│   ├── js/                   # JavaScript de la aplicación
-│   ├── views/                # Vistas Blade
-│   └── docs/                 # Documentación adicional
-├── routes/                   # Rutas de la aplicación
-└── storage/                  # Almacenamiento de archivos
-```
-
-## 🔒 Seguridad
-
-- **Autenticación**: Sistema basado en sesiones seguras
-- **Autorización**: Control de acceso basado en roles
-- **Validación**: Validación de datos en servidor y cliente
-- **Protección CSRF**: Tokens de seguridad en formularios
-- **Encriptación**: Contraseñas hasheadas con bcrypt
-
-## 🧪 Testing
-
-El proyecto incluye pruebas automatizadas con PHPUnit:
-
-```bash
-# Ejecutar todas las pruebas
-php artisan test
-
-# Ejecutar pruebas específicas
-php artisan test --filter=FeatureTest
-```
-
-## 🚀 Despliegue
-
-### Optimización para Producción
-
-```bash
-# Optimizar la aplicación
-php artisan optimize
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-# Compilar assets para producción
-npm run build
-```
-
-### Variables de Entorno Importantes
-
-```env
-APP_NAME="Servicio Estudiantina UNET"
-APP_ENV=production
-APP_KEY=base64:...
-APP_DEBUG=false
-APP_URL=https://tudominio.com
-```
-
-## 📚 Documentación Adicional
-
-- [Documentación de Mensajes de Administración](resources/docs/mensajes-administracion.md)
-- [Laravel Documentation](https://laravel.com/docs)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-
-## 🤝 Contribuciones
-
-Las contribuciones son bienvenidas. Por favor, sigue estos pasos:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## 📞 Contacto
-
-**Universidad Nacional Experimental del Táchira (UNET)**
-
-- 📧 Email: <cultura@unet.edu.ve>
-- 📞 Teléfono: +58 276 3532578
-- 📍 Ubicación: Edf. 35 (A), primer piso
+La plataforma permite la digitalizacion de partituras, clasificacion de obras por instrumentacion y autor, generacion automatica de codigos QR para acceso rapido a documentos PDF o ejecuciones de referencia en video, y el control fisico de estantes, gavetas y prestamos para los integrantes de la agrupacion.
 
 ---
 
-<div align="center">
-  <p><strong>Desarrollado con ❤️ para la Estudiantina UNET "Eufrasio Medina"</strong></p>
-  <p><em>"Promoviendo la música venezolana andina desde 1976"</em></p>
-</div>
+## Capacidades del Sistema y Modulos Principales
+
+### Catalogación Musical Avanzada
+
+* **Ficha Unificada de Obras y Partituras**: Vinculacion dinamica entre obras musicales, instrumentos requeridos, archivos PDF alojados en servidor y enlaces de video de referencia.
+* **Generacion Automatica de Codigos QR**: Integracion con `SimpleSoftwareIO/SimpleQrCode` para generar codigos QR interactivos en tiempo real que permiten a los musicos escanear y descargar partituras directamente en sus dispositivos moviles.
+* **Clasificacion por Autores y Contribuciones**: Modelo relacional intermedio que distingue entre compositores, arreglistas, letristas y transcriptores mediante la entidad pivot `contribuciones`.
+
+### Control de Inventario Fisico y Prestamos
+
+* **Ubicacion por Estantes y Gavetas**: Mapeo fisico del material impreso en el archivo de la Estudiantina (`estantes` / `gavetas`).
+* **Registro de Prestamos (`prestamos`)**: Control de salida y devolucion de partituras fisicas asignadas a los usuarios del sistema (`usuarios_inventario`).
+
+### Experiencia de Usuario y Personalizacion
+
+* **Interfaz Adaptativa con Tailwind CSS 4**: Diseño responsivo optimizado para escritorios y telefonos moviles.
+* **Soporte de Modo Oscuro Persistente**: Preferencia de tema almacenada en la base de datos por usuario (`dark_mode`) y conmutacion en caliente via AJAX.
+
+---
+
+## Arquitectura de Software y Modelo Relacional
+
+El sistema esta construido siguiendo el patron **Model-View-Controller (MVC)** nativo de Laravel con componentes Blade reutilizables (`AppLayout`, `HeaderLanding`, `Footer`, `Alert`):
+
+### Entidades de Datos Principales
+
+* **`User`**: Usuarios de la aplicacion con diferenciacion de roles (`es_escritor = true` para administradores).
+* **`obra`**: Registros musicales con titulo y año de composicion.
+* **`autor`**: Compositores, arreglistas y colaboradores.
+* **`partitura`**: Documento especifico asociado a una obra e instrumento, con URLs de PDF y video.
+* **`instrumento`**: Catalogo de instrumentos (familia y tipo).
+* **`estante`**: Almacenamiento fisico (gavetas).
+* **`inventario`**: Relacion muchos a muchos entre partituras y estantes con control de cantidad disponible.
+* **`prestamo`**: Registro transaccional de circulacion de material fisico.
+
+---
+
+## Control de Acceso y Middleware
+
+El sistema implementa seguridad basada en middlewares de Laravel para proteger las rutas del sistema:
+
+* **`AdminMiddleware`**: Restringe el acceso a los paneles CRUD de administracion (`/admin/*`) unicamente a usuarios con privilegios de escritura (`es_escritor = true`).
+* **`UserMiddleware`**: Controla la navegacion de los musicos e integrantes regulares hacia sus partituras asignadas (`/usuario/*`).
+* **`RedirectIfAuthenticated`**: Redirige automaticamente a los usuarios autenticados segun su rol al intentar acceder al formulario de login.
+
+---
+
+## Guia de Instalacion y Despliegue Local
+
+### Requisitos Previos
+
+* PHP 8.2 o superior con extensiones PDO y SQLite habilitadas.
+* Composer 2.x.
+* Node.js 18.x y npm.
+
+### Pasos para la Configuracion
+
+1. Clonar el repositorio e instalar dependencias PHP:
+
+   ```bash
+   composer install
+   ```
+
+2. Instalar dependencias de frontend:
+
+   ```bash
+   npm install
+   ```
+
+3. Configurar el archivo de entorno:
+
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+
+4. Preparar la base de datos local SQLite y ejecutar migraciones con datos semilla:
+
+   ```bash
+   touch database/database.sqlite
+   php artisan migrate --seed
+   ```
+
+5. Compilar los recursos frontend:
+
+   ```bash
+   npm run build
+   ```
+
+6. Iniciar el servidor local de desarrollo:
+
+   ```bash
+   php artisan serve --port 8050
+   ```
+
+7. Acceder en el navegador a `http://localhost:8050`.
+
+---
+
+## Pruebas Automatizadas
+
+El proyecto incluye suites de prueba automatizadas mediante **Pest / PHPUnit** para verificar las reglas de negocio y los controladores de administracion:
+
+```bash
+php artisan test
+```
+
+---
+
+**Desarrollado por:**
+Jose Gregorio Briceño Romero
+Francisco José Sanchez Zea
+Axel Orlando Porras González
+*Ingenieria Informatica - Universidad Nacional Experimental del Tachira (UNET)*
