@@ -29,7 +29,7 @@
     "title": "Ingeniería de Lenguajes de Programación",
     "shortDesc": "Diseño y extensión de un compilador para el lenguaje TINY. Implementación de análisis sintáctico (AST) y gestión de ámbitos jerárquicos.",
     "tech": ["Java", "JFlex / JavaCUP", "Gestión de Memoria"],
-    "readmePath": "https://raw.githubusercontent.com/GregorioBrc/Compilador/refs/heads/main/README.md"
+    "readmePath": "readmes/Compilador.md"
   },
   {
     "id": "laravel-web",

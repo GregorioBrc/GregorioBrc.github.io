@@ -1,4 +1,3 @@
-// Configuración de Marked (idéntica a la anterior)
 marked.setOptions({
   highlight: function (code, lang) {
     const language = hljs.getLanguage(lang) ? lang : "plaintext";
@@ -9,14 +8,15 @@ marked.setOptions({
 
 async function loadProjects() {
   const grid = document.getElementById("projects-grid");
-  const response = await fetch("./data/projects.json");
-  const projects = await response.json();
+  try {
+    const response = await fetch("./data/projects.json");
+    const projects = await response.json();
 
-  grid.innerHTML = "";
-  projects.forEach((proj) => {
-    const card = document.createElement("article");
-    card.className = "project-card";
-    card.innerHTML = `
+    grid.innerHTML = "";
+    projects.forEach((proj) => {
+      const card = document.createElement("article");
+      card.className = "project-card";
+      card.innerHTML = `
             <span class="project-tag">${proj.tag}</span>
             <h4>${proj.title}</h4>
             <p>${proj.shortDesc}</p>
@@ -24,9 +24,12 @@ async function loadProjects() {
               .map((t) => `<span>${t}</span>`)
               .join("")}</div>
         `;
-    card.addEventListener("click", () => openProjectDrawer(proj));
-    grid.appendChild(card);
-  });
+      card.addEventListener("click", () => openProjectDrawer(proj));
+      grid.appendChild(card);
+    });
+  } catch (error) {
+    console.error("Error cargando proyectos:", error);
+  }
 }
 
 async function openProjectDrawer(project) {
@@ -36,40 +39,42 @@ async function openProjectDrawer(project) {
   drawer.classList.add("open");
   document.body.style.overflow = "hidden";
 
-  if (document.getElementById("div_tabs_") != null) {
-    document.getElementById("div_tabs_").remove();
+  // Limpiar contenido previo de pestañas
+  const existingTabs = document.getElementById("div_tabs_");
+  if (existingTabs) {
+    existingTabs.remove();
   }
 
-  // 1. Construir cabecera y Contenedor de Tabs
-  let tabsHTML = "";
+  let headerContent = "";
+
+  // 2. Construir pestañas si es un arreglo de READMEs
   if (Array.isArray(project.readmePath)) {
-    tabsHTML = `
+    const tabsHTML = `
             <div class="drawer-tabs">
                 ${project.readmePath
                   .map(
                     (src, idx) => `
                     <button class="tab-btn ${idx === 0 ? "active" : ""}" 
-                            onclick="switchTab(this, '${formatLink(
-                              src.path
-                            )}')">
+                            onclick="switchTab(this, '${formatLink(src.path)}')">
                         ${src.label}
                     </button>
-                `
+                `,
                   )
                   .join("")}
             </div>
         `;
-    let heat = document.createElement("header");
-    heat.id = "div_tabs_";
-    heat.innerHTML = `${tabsHTML}`;
-    header.appendChild(heat);
+    headerContent += tabsHTML;
   }
+
+  const headerElem = document.createElement("div");
+  headerElem.id = "div_tabs_";
+  headerElem.innerHTML = headerContent;
+  header.appendChild(headerElem);
 
   body.innerHTML = `<div id="readme-loader" class="markdown-body">
                     <p class="code-prefix">// cargando_doc...</p>
                     </div>`;
 
-  //2. Cargar el primer documento por defecto
   if (Array.isArray(project.readmePath)) {
     renderMarkdown(formatLink(project.readmePath[0].path));
   } else {
@@ -94,25 +99,16 @@ window.switchTab = (btn, path) => {
   renderMarkdown(path);
 };
 
-// Función núcleo de renderizado
+// Cargar y renderizar Markdown
 async function renderMarkdown(path) {
   const container = document.getElementById("readme-loader");
   container.innerHTML = "<p class='code-prefix'>// fetching_content...</p>";
 
   try {
     const response = await fetch(path);
+    if (!response.ok) throw new Error("HTTP error " + response.status);
     const md = await response.text();
     container.innerHTML = marked.parse(md);
-
-    // Renderizar Mermaid
-    const mermaidBlocks = container.querySelectorAll(".language-mermaid");
-    if (mermaidBlocks.length > 0) {
-      mermaid.initialize({
-        theme: "dark",
-        startOnLoad: false,
-      });
-      await mermaid.run({ nodes: mermaidBlocks });
-    }
 
     // Highlight Code
     container
@@ -124,9 +120,24 @@ async function renderMarkdown(path) {
   }
 }
 
-// Inicialización (Cerrar drawer, etc.) - Igual que antes
-document.addEventListener("DOMContentLoaded", loadProjects);
-document.getElementById("close-drawer").onclick = () => {
-  document.getElementById("project-drawer").classList.remove("open");
-  document.body.style.overflow = "auto";
-};
+// Función para cerrar el drawer
+function closeDrawer() {
+  const drawer = document.getElementById("project-drawer");
+  if (drawer) {
+    drawer.classList.remove("open");
+    document.body.style.overflow = "auto";
+  }
+}
+
+// Inicialización de Eventos
+document.addEventListener("DOMContentLoaded", () => {
+  loadProjects();
+
+  const closeBtn = document.getElementById("close-drawer");
+  if (closeBtn) closeBtn.onclick = closeDrawer;
+
+  // Cerrar Drawer presionando la tecla ESC
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeDrawer();
+  });
+});
