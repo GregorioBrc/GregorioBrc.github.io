@@ -1,603 +1,126 @@
-# WebApi_IGBC - Sistema de Gestión Comercial
-
-## 📋 Descripción General
-
-WebApi_IGBC es una API RESTful desarrollada en ASP.NET Core 8.0 que gestiona un sistema completo de administración comercial orientado a la venta de productos. El sistema permite la gestión de vendedores, clientes, órdenes de pedido, productos, cobranzas y notificaciones en tiempo real, con integración móvil a través de Firebase Cloud Messaging.
-
-### 🎯 Propósito Principal
-
-Esta API sirve como backend para aplicaciones móviles de ventas, proporcionando:
-
-- Gestión completa del ciclo de ventas (clientes → órdenes → productos → cobranzas)
-- Sistema de autenticación segura con JWT
-- Control de crédito para vendedores
-- Notificaciones push en tiempo real
-- Administración de dispositivos móviles
-- Sistema de aprobación de órdenes
-
-## 🏗️ Arquitectura y Tecnología
-
-### Stack Tecnológico
-
-| Tecnología | Versión | Propósito |
-|------------|---------|-----------|
-| **ASP.NET Core** | 8.0 | Framework de desarrollo |
-| **Entity Framework Core** | 9.0.9 | ORM y acceso a datos |
-| **MySQL** | 10.4.32+ | Base de datos relacional |
-| **Pomelo.EntityFrameworkCore** | 9.0.0 | Driver MySQL para EF |
-| **JWT Bearer** | 8.0.20 | Autenticación y autorización |
-| **Firebase Admin** | 3.4.0 | Notificaciones push |
-| **SignalR** | - | Comunicación en tiempo real |
-| **BCrypt.Net** | 4.0.3 | Hashing de contraseñas |
-| **Swagger** | 6.6.2 | Documentación de API |
-
-### Arquitectura de la Aplicación
-
-```mermaid
-graph TB
-    subgraph "Cliente Móvil"
-        A[Aplicación Android/iOS]
-    end
-    
-    subgraph "Capa de Presentación"
-        B[Controllers API REST]
-        C[Hubs SignalR]
-    end
-    
-    subgraph "Capa de Negocio"
-        D[Services]
-        E[Middleware]
-        F[ODT #40;Object Data Transfer#41;]
-    end
-    
-    subgraph "Capa de Datos"
-        G[Entity Framework]
-        H[Models]
-        I[ContextDB]
-    end
-    
-    subgraph "Almacenamiento"
-        J[MySQL Database]
-    end
-    
-    subgraph "Servicios Externos"
-        K[Firebase Cloud Messaging]
-    end
-    
-    A -->|HTTPS/JWT| B
-    A -->|SignalR| C
-    B --> D
-    C --> D
-    D --> G
-    G --> H
-    G --> I
-    I --> J
-    D --> K
-```
-
-## 🔐 Sistema de Autenticación y Autorización
-
-### Roles del Sistema
-
-El sistema implementa tres roles principales:
-
-1. **Vendedor** (`Vendedor`)
-   - Crea y gestiona sus propias órdenes
-   - Visualiza sus clientes asignados
-   - Consulta su historial de ventas
-
-2. **Aprobador** (`Aprobador`)
-   - Aprueba/rechaza órdenes pendientes
-   - Gestiona dispositivos móviles
-   - Acceso a reportes administrativos
-
-3. **Administrador** (`Admin`)
-   - Control total del sistema
-   - Gestión de usuarios y roles
-   - Configuración del sistema
-
-### Flujo de Autenticación
-
-```mermaid
-sequenceDiagram
-    participant U as Usuario
-    participant A as API
-    participant DB as Base de Datos
-    participant F as Firebase
-    
-    U->>A: POST /api/auth/login
-    Note over U,A: {email, password, deviceId}
-    
-    A->>DB: Verificar credenciales
-    DB-->>A: Usuario encontrado
-    
-    alt Dispositivo nuevo
-        A->>A: Registrar dispositivo (pendiente)
-        A-->>U: 208 - Requiere aprobación
-    else Dispositivo existente
-        A->>A: Generar JWT Token
-        A-->>U: 200 - {token, userData}
-    end
-    
-    U->>A: Solicitudes autenticadas
-    Note over U,A: Header: Authorization: Bearer {token}
-    
-    A->>F: Notificaciones push (si aplica)
-```
-
-## 📊 Estructura de Base de Datos
-
-### Diagrama de Entidades
-
-```mermaid
-erDiagram
-    Usuario ||--o{ Rol : "tiene"
-    Usuario ||--o| Dispositivo : "usa"
-    Usuario ||--o| Vendedor : "es"
-    Vendedor ||--o{ Orden : "crea"
-    Vendedor ||--o{ Cobranza : "cobra"
-    Cliente ||--o{ Orden : "solicita"
-    Orden ||--o{ Pedido : "contiene"
-    Producto ||--o{ Pedido : "se_vende_en"
-    Orden ||--o{ Cobranza : "se_cobra_con"
-    
-    Usuario {
-        int Id PK
-        string Nombre
-        string Email UK
-        string Password
-        int DispositivoId FK
-    }
-    
-    Vendedor {
-        int Id PK
-        string Rif UK
-        double Credito_Maximo
-        double Credito_Actual
-        int UsuarioId FK
-    }
-    
-    Cliente {
-        int Id PK
-        string Nombre
-        string Rif UK
-        string Telefono
-        string Direccion
-    }
-    
-    Orden {
-        int Id PK
-        DateTime Fecha
-        DateTime Fecha_Pago
-        DateTime Fecha_Revision
-        double Total
-        string Estado
-        string MetodoPago
-        int ClienteId FK
-        int VendedorId FK
-    }
-    
-    Producto {
-        int Id PK
-        string Codigo UK
-        string Nombre
-        string Categoria
-        double Precio
-        int Stock
-    }
-    
-    Pedido {
-        int ProductoId FK
-        int OrdenId FK
-        int Cantidad
-        double Precio_Unitario
-    }
-    
-    Cobranza {
-        int Id PK
-        DateTime Fecha
-        double Monto
-        string MetodoPago
-        int VendedorId FK
-        int OrdenId FK
-    }
-```
-
-## 🚀 Endpoints de la API
-
-### Autenticación
-
-| Método | Endpoint | Descripción | Body | Respuesta |
-|--------|----------|-------------|------|-----------|
-| `POST` | `/api/auth/login` | Iniciar sesión | `{email, password, deviceId}` | `{id, name, email, roles[], token}` |
-
-### Gestión de Usuarios
-
-| Método | Endpoint | Descripción | Autenticación |
-|--------|----------|-------------|----------------|
-| `GET` | `/api/usuario` | Obtener todos los usuarios | Admin |
-| `GET` | `/api/usuario/{id}` | Obtener usuario por ID | Admin |
-| `POST` | `/api/usuario` | Crear nuevo usuario | Admin |
-| `PUT` | `/api/usuario/{id}` | Actualizar usuario | Admin |
-| `DELETE` | `/api/usuario/{id}` | Eliminar usuario | Admin |
-
-### Gestión de Vendedores
-
-| Método | Endpoint | Descripción | Autenticación |
-|--------|----------|-------------|----------------|
-| `GET` | `/api/vendedors` | Listar todos los vendedores | Admin |
-| `GET` | `/api/vendedors/{id}` | Obtener vendedor específico | Admin |
-| `POST` | `/api/vendedors` | Crear nuevo vendedor | Admin |
-| `PUT` | `/api/vendedors/{id}` | Actualizar vendedor | Admin |
-
-### Gestión de Clientes
-
-| Método | Endpoint | Descripción | Autenticación |
-|--------|----------|-------------|----------------|
-| `GET` | `/api/clientes` | Listar clientes | Vendedor+ |
-| `GET` | `/api/clientes/{id}` | Obtener cliente específico | Vendedor+ |
-| `POST` | `/api/clientes` | Crear cliente | Vendedor+ |
-| `PUT` | `/api/clientes/{id}` | Actualizar cliente | Vendedor+ |
-
-### Gestión de Órdenes
-
-| Método | Endpoint | Descripción | Autenticación |
-|--------|----------|-------------|----------------|
-| `GET` | `/api/ordenes` | Listar todas las órdenes | Aprobador+ |
-| `GET` | `/api/ordenes/usuario` | Órdenes del usuario autenticado | Vendedor |
-| `GET` | `/api/ordenes/{id}` | Obtener orden específica | Vendedor+ |
-| `POST` | `/api/ordenes` | Crear nueva orden | Vendedor |
-| `PUT` | `/api/ordenes/{id}` | Actualizar orden | Vendedor |
-| `DELETE` | `/api/ordenes/{id}` | Eliminar orden | Admin |
-
-### Gestión de Productos
-
-| Método | Endpoint | Descripción | Autenticación |
-|--------|----------|-------------|----------------|
-| `GET` | `/api/productos` | Listar productos | Vendedor+ |
-| `GET` | `/api/productos/{id}` | Obtener producto específico | Vendedor+ |
-| `POST` | `/api/productos` | Crear producto | Admin |
-| `PUT` | `/api/productos/{id}` | Actualizar producto | Admin |
-| `DELETE` | `/api/productos/{id}` | Eliminar producto | Admin |
-
-### Gestión de Cobranzas
-
-| Método | Endpoint | Descripción | Autenticación |
-|--------|----------|-------------|----------------|
-| `GET` | `/api/cobranzas` | Listar cobranzas | Aprobador+ |
-| `POST` | `/api/cobranzas` | Registrar cobranza | Vendedor |
-
-### Aprobación de Órdenes
-
-| Método | Endpoint | Descripción | Autenticación |
-|--------|----------|-------------|----------------|
-| `GET` | `/api/aprobador` | Órdenes pendientes de aprobación | Aprobador |
-| `PUT` | `/api/aprobador/{id}` | Aprobar/rechazar orden | Aprobador |
-
-### Notificaciones
-
-| Método | Endpoint | Descripción | Autenticación |
-|--------|----------|-------------|----------------|
-| `Hub` | `/notificacionesHub` | Conexión SignalR | JWT |
-
-## 💼 Lógica de Negocio
-
-### Flujo de Órdenes
-
-```mermaid
-stateDiagram-v2
-    [*] --> En_Proceso: Vendedor crea orden
-    En_Proceso --> Esperando_Productos: Orden aprobada
-    Esperando_Productos --> Procesado: Productos disponibles
-    En_Proceso --> Rechazado: Orden rechazada
-    
-    note right of En_Proceso
-        Revisión de crédito
-        Aprobación requerida
-    end note
-```
-
-### Control de Crédito
-
-- **Crédito Máximo**: Límite establecido por administrador
-- **Crédito Actual**: Monto actualmente utilizado
-- **Validación**: Al crear orden, se verifica `Crédito_Actual + Total_Orden <= Crédito_Máximo`
-- **Actualización**: Al aprobar/rechazar órdenes, se ajusta el crédito actual
-
-### Estados de Órdenes
-
-- `En Proceso` - Orden creada, pendiente de aprobación
-- `Esperando Productos` - Aprobada, esperando disponibilidad
-- `Procesado` - Completada exitosamente
-- `Rechazado` - Rechazada por aprobador
-
-## 🔧 Instalación y Configuración
-
-### Requisitos Previos
-
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [MySQL Server](https://dev.mysql.com/downloads/) 8.0+
-- [Visual Studio 2022](https://visualstudio.microsoft.com/) o [VS Code](https://code.visualstudio.com/)
-
-### Pasos de Instalación
-
-1. **Clonar el repositorio**
-
-   ```bash
-   git clone https://github.com/tu-usuario/WebApi_IGBC.git
-   cd WebApi_IGBC
-   ```
-
-2. **Configurar la base de datos**
-
-   ```sql
-   CREATE DATABASE IGBC_Server;
-   CREATE USER 'root'@'localhost' IDENTIFIED BY 'tu_password';
-   GRANT ALL PRIVILEGES ON IGBC_Server.* TO 'root'@'localhost';
-   FLUSH PRIVILEGES;
-   ```
-
-3. **Configurar las variables de entorno**
-   - Copiar `appsettings.json` a `appsettings.Development.json`
-   - Actualizar la cadena de conexión MySQL
-   - Configurar clave JWT y credenciales Firebase
-
-4. **Instalar dependencias**
-
-   ```bash
-   dotnet restore
-   ```
-
-5. **Aplicar migraciones**
-
-   ```bash
-   dotnet ef database update
-   ```
-
-6. **Ejecutar la aplicación**
-
-   ```bash
-   dotnet run
-   ```
-
-### Configuración de Firebase
-
-1. Crear proyecto en [Firebase Console](https://console.firebase.google.com/)
-2. Generar archivo de credenciales de servicio
-3. Guardar como `firebase_key.json` en la raíz del proyecto
-4. Configurar canales de notificación en la app móvil
-
-## 🧪 Desarrollo y Testing
-
-### Variables de Configuración
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-  "ConnectionStrings": {
-    "Connection": "server=localhost;port=3306;database=IGBC_Server;user=root;password=tu_password"
-  },
-  "JWT": {
-    "Key": "clave_secreta_super_segura_minimo_256_bits",
-    "Issuer": "https://tu-api.com",
-    "Audience": "https://tu-app-movil.com"
-  }
-}
-```
-
-### Entorno de Desarrollo
-
-En desarrollo, la aplicación incluye:
-
-- Swagger UI en `/swagger`
-- Datos de prueba generados automáticamente
-- Logs detallados de Entity Framework
-- Validaciones de seguridad relajadas
-
-### Testing de API con Swagger
-
-1. Acceder a `https://localhost:5001/swagger`
-2. Autenticar con usuario de prueba:
-   - **Admin**: `PruebaAdm@gmail.com` / `12345678`
-   - **Aprobador**: `PruebaApro@gmail.com` / `12345678`
-   - **Vendedor**: `PruebaVen1@gmail.com` / `12345678`
-
-## 📱 Integración Móvil
-
-### Flujo de Dispositivos
-
-```mermaid
-sequenceDiagram
-    participant App as App Móvil
-    participant API as API REST
-    participant Admin as Admin Web
-    
-    App->>API: Login con deviceId
-    API->>App: 208 - Dispositivo pendiente
-    
-    Admin->>API: GET /api/dispositivos
-    API-->>Admin: Lista de dispositivos pendientes
-    
-    Admin->>API: PUT /api/dispositivos/{id}/aprobar
-    API->>App: Notificación push
-    
-    App->>API: Login nuevamente
-    API-->>App: JWT Token
-```
-
-### Notificaciones Push
-
-El sistema utiliza Firebase Cloud Messaging para:
-
-- **Aprobación de dispositivos**: Cuando un admin aprueba un dispositivo
-- **Actualización de órdenes**: Cuando el estado de una orden cambia
-- **Recordatorios**: Alertas de pagos pendientes
-- **Anuncios**: Comunicaciones generales
-
-Configuración Android:
-
-```xml
-<!-- AndroidManifest.xml -->
-<application>
-    <service
-        android:name=".MyFirebaseMessagingService"
-        android:exported="false">
-        <intent-filter>
-            <action android:name="com.google.firebase.MESSAGING_EVENT" />
-        </intent-filter>
-    </service>
-</application>
-```
-
-## 🔒 Seguridad
-
-### Medidas Implementadas
-
-- **JWT Tokens**: Autenticación stateless con expiración
-- **BCrypt**: Hashing de contraseñas con salt único
-- **Rate Limiting**: Prevención de ataques de fuerza bruta
-- **Validación de entrada**: Prevención de SQL injection
-- **HTTPS**: Cifrado de comunicaciones
-- **Dispositivos registrados**: Control de acceso por dispositivo
-
-### Validaciones
-
-```csharp
-// Email validation
-Regex.IsMatch(email, @"^[a-zA-Z0-9_+-]+@[a-zA-Z0-9]+[.][a-zA-Z]{2,}$")
-
-// RIF validation (Venezuela)
-Regex.IsMatch(rif, @"^[V|E|J|P]-[0-9]{5,9}$")
-
-// Password requirements
-MinLength: 3, MaxLength: 16
-```
-
-## 🚀 Despliegue en Producción
-
-### Consideraciones
-
-1. **Seguridad**
-   - Usar HTTPS obligatorio
-   - Configurar firewall de aplicaciones
-   - Implementar rate limiting
-   - Habilitar logging y monitoreo
-
-2. **Base de datos**
-   - Respaldos automáticos
-   - Índices optimizados
-   - Configuración de conexiones
-
-3. **Performance**
-   - Caching con Redis (recomendado)
-   - CDN para archivos estáticos
-   - Load balancing si es necesario
-
-4. **Monitoreo**
-   - Application Insights o similar
-   - Alertas de errores
-   - Métricas de rendimiento
-
-### Docker (Opcional)
-
-```dockerfile
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 80
-EXPOSE 443
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-COPY ["WebApi_IGBC.csproj", "."]
-RUN dotnet restore "./WebApi_IGBC.csproj"
-COPY . .
-WORKDIR "/src/."
-RUN dotnet build "WebApi_IGBC.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "WebApi_IGBC.csproj" -c Release -o /app/publish
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebApi_IGBC.dll"]
-```
-
-## 📚 Documentación Adicional
-
-### Estructura de Proyecto
-
-```
-WebApi_IGBC/
-├── Controllers/           # Controladores API REST
-├── Models/               # Entidades de base de datos
-├── ODT/                  # Object Data Transfer classes
-├── ContextDB/            # Configuración de Entity Framework
-├── Services/             # Servicios de negocio
-├── Hubs/                 # SignalR Hubs
-├── Middleware/           # Middleware personalizado
-├── Definiciones/         # Constantes y enums
-├── Utils/                # Utilidades y helpers
-├── Migrations/           # Migraciones de base de datos
-├── wwwroot/              # Archivos estáticos
-└── Properties/           # Configuración de lanzamiento
-```
-
-### Convenciones de Código
-
-- **Nomenclatura**: C# standard (PascalCase para clases, camelCase para variables)
-- **Async/Await**: Usado consistentemente para operaciones de I/O
-- **Validation**: Data annotations y validación personalizada
-- **Error Handling**: Try-catch con respuestas HTTP apropiadas
-- **Logging**: Integración con sistema de logging de ASP.NET Core
-
-### Ejemplos de Uso
-
-#### Autenticación
-
-```csharp
-// POST /api/auth/login
-{
-    "correo": "vendedor@empresa.com",
-    "password": "contraseña123",
-    "deviceId": "android_device_123456",
-    "info_Telefono": "Samsung Galaxy S21"
-}
-```
-
-#### Crear Orden
-
-```csharp
-// POST /api/ordenes
-// Headers: Authorization: Bearer {token}
-{
-    "Id_Vendedor": 123,
-    "Rif_Cliente": "J-12345678",
-    "ClienteNombre": "Empresa XYZ",
-    "Total": 1500.00,
-    "MetodoPago": "Credito"
-}
-```
-
-#### Actualizar Orden
-
-```csharp
-// PUT /api/ordenes/456
-// Headers: Authorization: Bearer {token}
-{
-    "Id": 456,
-    "Vendedor_id": 123,
-    "Total": 1800.00,
-    "MetodoPago": "Contado"
-}
-```
+# WebApi_IGBC - Backend Comercial y Middleware de Integracion con ERP Profit Plus 2K8
+
+[![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat-square&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
+[![C#](https://img.shields.io/badge/C%23-12.0-239120?style=flat-square&logo=c-sharp&logoColor=white)](https://docs.microsoft.com/en-us/dotnet/csharp/)
+[![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-8.0-512BD4?style=flat-square&logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/apps/aspnet)
+[![Entity Framework Core](https://img.shields.io/badge/EF%20Core-9.0-512BD4?style=flat-square&logo=dotnet&logoColor=white)](https://docs.microsoft.com/ef/)
+[![Dapper](https://img.shields.io/badge/Dapper-2.1-EA2839?style=flat-square)](https://github.com/DapperLib/Dapper)
+[![MySQL](https://img.shields.io/badge/MySQL-10.4-4479A1?style=flat-square&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![SQL Server](https://img.shields.io/badge/SQL%20Server-Profit%202K8-CC292B?style=flat-square&logo=microsoft-sql-server&logoColor=white)](https://www.microsoft.com/sql-server/)
+[![Azure Blob Storage](https://img.shields.io/badge/Azure-Blob%20Storage-0089D6?style=flat-square&logo=microsoft-azure&logoColor=white)](https://azure.microsoft.com/)
+[![Firebase FCM](https://img.shields.io/badge/Firebase-Cloud%20Messaging-FFCA28?style=flat-square&logo=firebase&logoColor=black)](https://firebase.google.com/)
+[![SignalR](https://img.shields.io/badge/Real--time-SignalR-512BD4?style=flat-square)](https://dotnet.microsoft.com/apps/aspnet/signalr)
+
+## Descripcion General
+
+WebApi_IGBC es una solucion de infraestructura backend desarrollada sobre ASP.NET Core 8.0 que funciona como middleware de integracion empresarial entre aplicaciones moviles/web y el sistema de planificacion de recursos empresariales (ERP) Profit Plus 2K8 (SQL Server).
+
+La plataforma permite automatizar el flujo de ventas B2B, sincronizando en tiempo real inventarios, pedidos, facturacion, cobranza multimoneda y estado de cartera de clientes, eliminando la duplicidad de carga manual y garantizando la integridad transaccional entre la nube y el sistema administrativo central.
 
 ---
 
-**Desarrollado con ❤️ por el Equipo Tecnico**
+## Modulos Tecnicos y Arquitectura de Software
+
+### Middleware de Interoperabilidad con Profit Plus 2K8
+* **Inyeccion Transaccional mediante Stored Procedures**: Integracion directa con el motor de SQL Server de Profit 2K8 mediante Dapper, ejecutando de forma atomica los procedimientos almacenados nativos del ERP (`pp_ins_pedidos`, `pp_ins_reng_ped`, `pp_ins_cobros`, `pp_ins_reng_cob`, `pp_ins_reng_tip`, `pp_next_number` y `pp_cierra_cobros`).
+* **Segregacion y Particion de Ordenes**: Implementacion de algoritmo de particion que analiza el volumen de items de cada pedido. Si la orden excede 15 renglones o mezcla productos en promocion con regulares, el sistema fragmenta el pedido en ordenes hijas relacionales (`OrdenPadreId`) compatibles con los limites de facturacion del ERP.
+* **Motor de Ajuste Cambiario y Cuadre Multimoneda**: Calculo automatizado de diferenciales cambiarios entre la fecha de emision de la factura y la fecha del cobro. Genera automaticamente los registros correspondientes de Notas de Debito (`N/DB`), Notas de Credito (`N/CR`) o consumo/generacion de Adelantos (`ADEL`) dentro de las tablas nativas de Profit 2K8 (`docum_cc`, `cobros`, `reng_cob`).
+
+### Gestion Financiera, Cartera y Arqueo
+* **Analisis de Riesgo de Cartera**: Generacion dinamica de estados de cuenta y antiguedad de saldo, clasificando los creditos en rangos de riesgo (Verde, Amarillo, Naranja, Rojo, Azul) segun los dias de vencimiento.
+* **Control de Saldos a Favor**: Administracion local y sincronizada con Profit 2K8 de adelantos y saldos a favor de clientes para su aplicacion automatica en nuevos cobros.
+* **Gestion de Efectivo y Conciliacion**: Modulo de arqueo de caja en divisas para la fuerza de ventas y registro de transacciones contables (`Contabilidad_Efectivo`) previa conciliacion de depositos bancarios.
+
+### Tareas Asincronas en Segundo Plano (Worker Services)
+La API implementa 7 servicios alojados (`IHostedService`) que ejecutan procesos de sincronizacion diferencial entre MySQL y SQL Server:
+* **TasaSyncService_Back**: Sincronizacion diaria y reintentos programados para la tasa oficial de cambio en divisas.
+* **ProductosSyncService_Back**: Sincronizacion incremental de catalogo, precios y stock disponible.
+* **ClientesSyncService_Back**: Sincronizacion de ficha de clientes y saldos a favor.
+* **VendedoresSyncService_Back**: Sincronizacion de fuerza de ventas y asignaciones.
+* **FacturasSyncService_Back**: Verificacion periodica del estado de facturacion y cobro de pedidos.
+* **CuentasBancariasSyncService_Back**: Actualizacion de cuentas e instituciones bancarias habilitadas.
+* **Desc_PromoServiceBack**: Sincronizacion de reglas de descuento y promociones globales.
+
+### Procesamiento Multimedia y Notificaciones
+* **Azure Blob Storage + ImageSharp**: Servicio de carga de comprobantes de pago que procesa las imagenes recibidas, ajusta la orientacion EXIF, escala la resolucion maxima a 1600px y convierte el archivo al formato optimizado WebP antes de su almacenamiento en la nube.
+* **Comunicaciones en Tiempo Real**: Notificaciones instantaneas mediante SignalR Hubs (`NotificacionesHub`) para cambios de estado de pedidos, variaciones de inventario y monitoreo de usuarios conectados.
+* **Notificaciones Push FCM**: Integracion con Firebase Cloud Messaging mediante canal de alta prioridad para alertas operativas en dispositivos Android/iOS.
+
+---
+
+## Modelo de Datos e Infranqueabilidad de Seguridad
+
+### Seguridad y Control de Acceso
+* **Autenticacion Stateless**: Implementacion de tokens JWT con firma simetrica HMAC-SHA256, expiracion controlada y validacion dinamica por middleware (`Middleware_Desautentificar`).
+* **Mecanismo de Revocacion In-Memory**: Servicio de revocacion de accesos y tokens que invalida la sesion de usuarios bloqueados sin impactar el rendimiento de la base de datos principal.
+* **Control de Dispositivos y Vinculacion**: Validacion obligatoria de identidad de hardware (`DeviceId` e `Info_Telefono`) con requerimiento de aprobacion administrativa previa al inicio de sesion.
+* **Rate Limiting**: Politicas de limitacion de peticiones fijas por IP en endpoints criticos (`LoginLimit`: 3 req/min) y globales por usuario (`GlobalLimit`: 30 req/min).
+
+### Matriz de Roles del Sistema
+* **Admin**: Gestion total de usuarios, parametros del sistema, autorizacion de dispositivos e invalidacion de cache.
+* **Aprobador**: Revision de pedidos entrantes, ajuste de precios, asignacion de transporte/sucursal e inyeccion a Profit Plus 2K8.
+* **Vendedor**: Registro de pedidos, consulta de catalogo/promociones, gestion de clientes asignados y reporte de cobros.
+* **Cobrador**: Validacion financiera de pagos y depositos, conciliacion bancaria, gestion de cartera y aprobacion de saldo a favor.
+* **Cliente**: Acceso al catalogo digital, auto-gestion de pedidos y consulta de saldo pendiente.
+
+---
+
+## Estructura de Persistencia Dual
+
+El sistema utiliza una arquitectura de almacenamiento hibrida orientada al rendimiento:
+
+1. **Base de Datos Local (MySQL 10.4 / Entity Framework Core 9.0)**: Almacena el estado operacional de la API, tokens de dispositivos, logs de ubicacion, configuraciones del sistema, usuarios, roles, estado de sesion, cache de productos y registro temporal de cobranzas.
+2. **Base de Datos ERP (Microsoft SQL Server / Profit Plus 2K8)**: Base de datos central donde residen los datos maestros del negocio. Es la fuente definitiva para la facturacion, contabilidad, maestros de inventario (`art`), clientes (`clientes`), vendedores (`vendedor`), documentos de CxC (`docum_cc`) y registros de caja/banco (`cuentas`, `cajas`).
+
+---
+
+## Resumen de Endpoints Principales
+
+### Autenticacion y Seguridad (/api/Auth)
+* `POST /api/Auth/login`: Autenticacion de usuario, verificacion de hash BCrypt y registro/validacion de dispositivo.
+* `POST /api/Auth/logout-all`: Invalidation global de tokens de sesion para todos los usuarios.
+* `GET /api/Auth/GenerarTokenSistema`: Generacion de credencial JWT de larga duracion para agentes de sincronizacion local.
+
+### Gestion de Ordenes (/api/Ordenes)
+* `GET /api/Ordenes`: Obtencion de ordenes de venta paginadas con proyecciones DTO optimizadas.
+* `POST /api/Ordenes/CrearCompleta`: Creacion atomica de ordenes con descuento directo de inventario local.
+* `POST /api/Ordenes/ConfirmarEdicion/{id}`: Confirmacion de cambios aplicados a ordenes en negociacion.
+* `GET /api/Ordenes/Hijas/{parentId}`: Consulta de sub-pedidos generados por division automatica.
+
+### Aprobacion e Inyeccion ERP (/api/Aprobador)
+* `GET /api/Aprobador`: Listado de pedidos pendientes por aprobacion operativa.
+* `POST /api/Aprobador/Aprobar/{id}`: Ejecuta la division de renglones e inyecta la orden en el ERP Profit Plus 2K8.
+* `POST /api/Aprobador/Editar/{id}`: Modificacion de cantidades, precios o descuentos de un pedido previo a su inyeccion.
+
+### Cobranza y Conciliacion (/api/Cobrador - /api/Cobranzas)
+* `GET /api/Cobrador/ReporteCartera`: Generacion de reporte de cuentas por cobrar estructurado por tramos de vencimiento.
+* `POST /api/Cobranzas/PagoOrden`: Registro de pago asociado a factura con carga adjunta de comprobante a Azure Blob Storage.
+* `POST /api/Cobrador/Aprobar/{id}`: Aprobacion del pago e inyeccion transaccional del cobro en Profit Plus 2K8.
+
+### Estado y Cache (/api/Status - /api/CacheManager)
+* `GET /api/Status/health`: Diagnostico de conectividad con la base de datos MySQL local y SQL Server Profit 2K8.
+* `POST /api/CacheManager/clear-all`: Limpieza e invalidacion manual de las estructuras en memoria cache.
+
+---
+
+## Tecnologias y Librerias
+
+| Tecnologia | Version | Funcion |
+|---|---|---|
+| **.NET** | 8.0 | Framework de desarrollo principal |
+| **C#** | 12.0 | Lenguaje de programacion |
+| **ASP.NET Core** | 8.0 | Web API Framework |
+| **Entity Framework Core** | 9.0.9 | ORM para base de datos MySQL local |
+| **Dapper** | 2.1.72 | Micro-ORM para ejecucion de Stored Procedures en Profit 2K8 |
+| **Pomelo Entity Framework** | 9.0.0 | Driver de alto rendimiento para MySQL / MariaDB |
+| **Microsoft SqlClient** | 5.1.6 | Conectividad nativa con Microsoft SQL Server |
+| **Azure Storage Blobs** | 12.27.0 | SDK de integracion con almacenamiento en la nube |
+| **SixLabors ImageSharp** | 2.1.9 | Compresion y conversion WebP de imagenes de comprobantes |
+| **FirebaseAdmin** | 3.4.0 | Integracion con el servicio FCM Push Notifications |
+| **BCrypt.Net-Next** | 4.0.3 | Hashing y verificacion de contraseñas de usuarios |
+| **Swashbuckle (Swagger)** | 6.6.2 | Documentacion interactiva OpenAPI |
+
+---
+
+**Desarrollado por Jose Gregorio Briceño Romero**  
+*Ingenieria Informatica - Universidad Nacional Experimental del Tachira (UNET)*

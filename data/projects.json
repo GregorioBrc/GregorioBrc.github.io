@@ -1,13 +1,26 @@
 [
   {
     "id": "b2b-maui-api",
-    "tag": "Sistemas Distribuidos",
-    "title": "Ecosistema de Gestión Comercial B2B",
-    "shortDesc": "Arquitectura cliente-servidor integrada por una aplicación móvil multiplataforma y una API RESTful. Sincronización en tiempo real y seguridad JWT.",
-    "tech": [".NET MAUI", "ASP.NET Core 8", "MySQL", "Firebase"],
+    "tag": "Sistemas Distribuidos & ERP",
+    "title": "Ecosistema Comercial B2B & Integración ERP Profit 2K8",
+    "shortDesc": "Arquitectura híbrida empresarial integrada por una App Móvil .NET 9 MAUI (5 roles), Web API RESTful centralizada y Agente de Borde en Windows para integración bidireccional en tiempo real con ERP Profit Plus 2K8.",
+    "tech": [
+      ".NET 9 MAUI",
+      "ASP.NET Core 8",
+      "SQL Server / Profit 2K8",
+      "MySQL",
+      "Dapper",
+      "SignalR",
+      "Azure Blobs",
+      "Worker Service"
+    ],
     "readmePath": [
-      { "label": "📱 App Móvil", "path": "readmes/AndroidAppIGBC.md" },
-      { "label": "🌐 Web API Backend", "path": "readmes/WebApi_IGBC.md" }
+      { "label": "App Móvil (.NET 9)", "path": "readmes/AndroidAppIGBC.md" },
+      { "label": "Web API Backend", "path": "readmes/WebApi_IGBC.md" },
+      {
+        "label": "Agente Local Windows",
+        "path": "readmes/ProfitLocalAgent.md"
+      }
     ]
   },
   {
